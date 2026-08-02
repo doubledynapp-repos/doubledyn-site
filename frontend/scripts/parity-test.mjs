@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Teste de Paridade + Sanidade — DoubleDyn Carbon Engine =====
 // Roda com: npm test
 // Verifica que o meter ao vivo (computePartialEstimates) produz EXATAMENTE

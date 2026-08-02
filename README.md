@@ -66,6 +66,15 @@ Quando o visitante não sabe os dados de consumo, o sistema **estima pela média
 
 ---
 
+## 📜 Licenciamento
+
+- **Motor de cálculo** (`frontend/app/lib/carbonEngine.js`, `benchmark.js`, `actionPlan.js`, `methodologyData.js`, `calcSchema.js`, `dqsEngine.js` e `frontend/scripts/parity-test.mjs`): **MIT License** — ver [`LICENSE.md`](LICENSE.md)
+- **Site, design, marca, imagens, contratos e demais conteúdo:** **todos os direitos reservados** — ver [`NOTICE.md`](NOTICE.md)
+
+> O motor é aberto por transparência metodológica e para se tornar um padrão do mercado. A plataforma completa (backend, dashboard, certificação) é um produto fechado — saiba mais em [doubledyn.com](https://doubledyn.com).
+
+---
+
 ## 🚀 Desenvolvimento
 
 ```bash

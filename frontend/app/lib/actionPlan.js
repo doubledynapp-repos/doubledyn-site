@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Gerador de Plano de Ação (v1) — o produto pós-calculadora =====
 // Gera 3 ações específicas a partir do diagnóstico:
 //   Ação 1: ataca o MAIOR emissor (energia/frota/instalações/resíduos)

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Nota Metodológica — Dados (fonte única de conteúdo) =====
 // Valores idênticos aos fatores usados no carbonEngine.js (consistência obrigatória).
 // STATUS: auditoria de fontes individuais em andamento — não publicar externamente antes da validação.

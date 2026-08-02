@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== DoubleDyn Carbon Engine — v4.0 (React Module) =====
 // Reescrito como módulo ES6 puro, sem dependência do DOM.
 // Fonte: GHG Protocol Brasil, IPCC AR6, MCTI 2024, ABNT NBR ISO 14064.

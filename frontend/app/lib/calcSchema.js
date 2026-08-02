@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Zod Schema — Calculadora DoubleDyn =====
 // Validação por step. Cada step tem seu próprio schema parcial.
 

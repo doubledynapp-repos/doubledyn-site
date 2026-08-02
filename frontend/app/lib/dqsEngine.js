@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 /**
  * DoubleDyn Quality Score (DQS) Engine v1.0
  * Motor de Cálculo de Inteligência de Carbono & Conformidade SBCE (Lei 15.042/2024)
