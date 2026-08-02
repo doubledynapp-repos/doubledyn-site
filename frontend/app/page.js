@@ -18,6 +18,19 @@ import Footer from './components/sections/Footer';
 export default function Home() {
   useRevealOnScroll();
 
+  useEffect(() => {
+    // Se a página carregar com uma hash na URL (ex: vindos do blog), scrollar até ela
+    if (typeof window !== 'undefined' && window.location.hash) {
+      setTimeout(() => {
+        const id = window.location.hash.substring(1);
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 500); // pequeno delay para o Next.js terminar a hidratação e as animações
+    }
+  }, []);
+
   return (
     <>
       <Navbar />

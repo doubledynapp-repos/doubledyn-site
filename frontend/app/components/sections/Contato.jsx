@@ -16,7 +16,6 @@ export default function Contato() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           company_name: data.empresa || 'N/A',
-          contact_name: data.nome || '',
           email: data.email,
           phone: '',
           message: data.mensagem,

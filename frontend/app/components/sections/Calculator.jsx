@@ -1,11 +1,240 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { STEP_SCHEMAS, calcFormSchema } from '../../lib/calcSchema';
-import { calculateEmissions, formatBRL, CNAE_TO_SETOR, RISCO_SETOR, PORTE_MAP } from '../../lib/carbonEngine';
+import { STEP_SCHEMAS } from '../../lib/calcSchema';
+import { calculateEmissions, formatBRL, CNAE_TO_SETOR, RISCO_SETOR, PORTE_MAP, computePartialEstimates } from '../../lib/carbonEngine';
+import { computeBenchmark } from '../../lib/benchmark';
+import { gerarPlanoDeAcao } from '../../lib/actionPlan';
 
 const TOTAL_STEPS = 6;
+
+// ── Número Animado (Live Meter) ──
+function AnimatedNumber({ value, decimals = 1 }) {
+  const [display, setDisplay] = useState(0);
+  const prev = useRef(0);
+
+  useEffect(() => {
+    const from = prev.current;
+    const to = value;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(to);
+      prev.current = value;
+      return;
+    }
+    prev.current = value;
+    if (Math.abs(from - to) < 0.001) { setDisplay(to); return; }
+    const start = performance.now();
+    const dur = 450;
+    let raf;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplay(from + (to - from) * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+
+  return <>{display.toFixed(decimals)}</>;
+}
+
+// ── Meter ao Vivo: impacto acumulado por etapa ──
+function LiveMeter({ partial }) {
+  const { totalBase, categorias, custoEstimado } = partial;
+  return (
+    <div className={`calc-live-meter${totalBase > 0 ? ' has-data' : ''}`}>
+      <div className="meter-head">
+        <span className="meter-label">SEU IMPACTO ATÉ AQUI</span>
+        <span className="meter-live"><span className="meter-dot" />AO VIVO</span>
+      </div>
+      <div className="meter-main">
+        <div className="meter-value">
+          <AnimatedNumber value={totalBase} />
+          <span className="meter-unit"> tCO₂e/ano</span>
+        </div>
+        <div className="meter-cost">
+          {totalBase > 0
+            ? <>≈ {formatBRL(custoEstimado)} de exposição anual</>
+            : 'Preencha os dados para ver seu impacto crescer ✨'}
+        </div>
+      </div>
+      <div className="meter-bars">
+        {categorias.map((c) => {
+          const pct = totalBase > 0 ? Math.round((c.valor / totalBase) * 100) : 0;
+          return (
+            <div key={c.nome} className="meter-bar-row">
+              <span className="meter-bar-label">{c.nome}</span>
+              <div className="meter-bar-track">
+                <div className="meter-bar-fill" style={{ width: `${pct}%` }} />
+              </div>
+              <span className="meter-bar-val">{c.valor.toFixed(1)} t</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="meter-note">+15% de margem de segurança entra no relatório final</div>
+    </div>
+  );
+}
+
+// ── Benchmark Setorial: você vs. a média do seu setor ──
+const BENCH_COLORS = {
+  acima: { color: '#e67e22', bg: 'rgba(230,126,34,0.12)', label: 'ACIMA DA MÉDIA' },
+  na_media: { color: '#f1c40f', bg: 'rgba(241,196,15,0.10)', label: 'NA MÉDIA DO SETOR' },
+  abaixo: { color: '#2ecc71', bg: 'rgba(46,204,113,0.12)', label: 'ABAIXO DA MÉDIA' },
+};
+
+function BenchmarkCard({ result }) {
+  const bench = useMemo(() => computeBenchmark({
+    emissionsTotal: result?.totalEmissao || 0,
+    revenueMillions: result?.faturamento > 0 ? result.faturamento / 1e6 : 0,
+    sector: result?.setor || 'outro',
+  }), [result]);
+
+  if (!bench.ok) {
+    return (
+      <div className="bench-card">
+        <div className="bench-head">
+          <span className="bench-title">⚔️ Você vs. seu Setor</span>
+        </div>
+        <p className="bench-fallback">{bench.message}</p>
+      </div>
+    );
+  }
+
+  const style = BENCH_COLORS[bench.status] || BENCH_COLORS.na_media;
+  const maxIntensity = Math.max(bench.intensity, bench.benchmark) * 1.15;
+  const yourPct = Math.min(100, (bench.intensity / maxIntensity) * 100);
+  const avgPct = Math.min(100, (bench.benchmark / maxIntensity) * 100);
+
+  return (
+    <div className="bench-card">
+      <div className="bench-head">
+        <span className="bench-title">⚔️ Você vs. seu Setor</span>
+        <span className="bench-pill" style={{ color: style.color, background: style.bg }}>{style.label}</span>
+      </div>
+
+      <div className="bench-main">
+        <div className="bench-rank">
+          <div className="bench-rank-value">Percentil {bench.rank}</div>
+          <div className="bench-rank-desc">
+            {bench.status === 'abaixo'
+              ? `entre os ${100 - bench.rank}% mais eficientes`
+              : `${bench.pctBetter}% das empresas do setor emitem menos que você`}
+          </div>
+        </div>
+        <div className="bench-bars">
+          <div className="bench-bar-row">
+            <span className="bench-bar-label">Sua empresa</span>
+            <div className="bench-bar-track">
+              <div className="bench-bar-fill yours" style={{ width: `${yourPct}%` }} />
+            </div>
+            <span className="bench-bar-val">{bench.intensity.toFixed(1)} t/R$mi</span>
+          </div>
+          <div className="bench-bar-row">
+            <span className="bench-bar-label">Média do setor</span>
+            <div className="bench-bar-track">
+              <div className="bench-bar-fill avg" style={{ width: `${avgPct}%` }} />
+            </div>
+            <span className="bench-bar-val">{bench.benchmark} t/R$mi</span>
+          </div>
+        </div>
+      </div>
+
+      <p className="bench-message">{bench.message}</p>
+      <div className="bench-opportunity">
+        <span className="bench-opp-label">💡 OPORTUNIDADE</span>
+        <span>{bench.opportunity}</span>
+      </div>
+      <p className="bench-note">
+        Comparação com a média nacional do setor (SEEG / GHG Protocol Brasil). Metodologia detalhada na{' '}
+        <a href="/metodologia" style={{ color: 'var(--accent)', fontWeight: 700 }}>Nota Metodológica</a>.
+      </p>
+    </div>
+  );
+}
+
+// ── Plano de Ação: 3 passos pós-diagnóstico (o produto que fecha a venda) ──
+const TIPO_BADGE = {
+  eficiencia: { label: 'REDUÇÃO', color: '#2ecc71', bg: 'rgba(46,204,113,0.12)' },
+  gestao: { label: 'GESTÃO', color: '#3498db', bg: 'rgba(52,152,219,0.12)' },
+  compensacao: { label: 'COMPENSAÇÃO', color: '#c3ff00', bg: 'rgba(195,255,0,0.10)' },
+};
+
+function ActionPlanCard({ result }) {
+  const plano = useMemo(() => gerarPlanoDeAcao(result), [result]);
+
+  const handleCriarConta = () => {
+    try {
+      localStorage.setItem('doubledyn_calc', JSON.stringify({
+        empresa: result.empresa, cnpj: result.cnpj, setor: result.setor,
+        emailContato: result.emailContato || '',
+        totalEmissao: result.totalEmissao, faturamento: result.faturamento,
+        dqsScore: result.dqsScore, pcrSeal: result.pcrSeal,
+      }));
+    } catch (e) { /* localStorage indisponível — segue sem pré-preencher */ }
+    window.location.href = '/register';
+  };
+
+  return (
+    <div className="plan-card">
+      <div className="plan-head">
+        <span className="plan-title">🎯 Seu Plano de Ação — 3 passos</span>
+        <span className="plan-sub">Específico para os seus dados · custos são estimativas</span>
+      </div>
+
+      <div className="plan-actions">
+        {plano.acoes.map((a, i) => {
+          const badge = TIPO_BADGE[a.tipo] || TIPO_BADGE.gestao;
+          return (
+            <div key={a.id} className="plan-action">
+              <div className="plan-action-head">
+                <span className="plan-action-num">{i + 1}</span>
+                <div className="plan-action-title-wrap">
+                  <div className="plan-action-title">{a.titulo}</div>
+                  <span className="plan-badge" style={{ color: badge.color, background: badge.bg }}>{badge.label}</span>
+                </div>
+              </div>
+              <p className="plan-action-desc">{a.descricao}</p>
+              <div className="plan-action-metrics">
+                <span className="plan-metric"><b>{formatBRL(a.custo)}</b> custo</span>
+                {a.economiaAnual !== null && a.economiaAnual > 0 && (
+                  <span className="plan-metric"><b>{formatBRL(a.economiaAnual)}/ano</b> economia</span>
+                )}
+                {a.paybackMeses !== null && (
+                  <span className="plan-metric"><b>{a.paybackMeses === 0 ? 'imediato' : `${a.paybackMeses} meses`}</b> payback</span>
+                )}
+                {a.reducaoTonnes > 0 && (
+                  <span className="plan-metric"><b>−{a.reducaoTonnes} t</b> CO₂e/ano</span>
+                )}
+                <span className="plan-metric"><b>DQS +{a.impactoDQS}</b></span>
+              </div>
+              <p className="plan-action-note">💼 {a.exposicao}{a.nota ? ` · ${a.nota}` : ''}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="plan-resumo">
+        <span><b>{formatBRL(plano.resumo.totalCusto)}</b> investimento total estimado</span>
+        <span><b>−{Math.round(plano.resumo.reducaoTotal)} t</b> CO₂e/ano reduzidos</span>
+        <span>DQS: <b>{plano.resumo.dqsAtual} → {plano.resumo.dqsPotencial}</b></span>
+      </div>
+
+      <div className="plan-cta">
+        <button className="btn btn-primary" onClick={handleCriarConta} style={{ flex: 1, justifyContent: 'center', padding: '18px', fontSize: '1rem' }}>
+          Criar conta grátis para simular o ROI e emitir seu selo →
+        </button>
+      </div>
+      <p className="plan-note">
+        Valores são estimativas de mercado (premissas documentadas). O simulador de ROI com seus dados reais é liberado após o cadastro. Metodologia na{' '}
+        <a href="/metodologia" style={{ color: 'var(--accent)', fontWeight: 700 }}>Nota Metodológica</a>.
+      </p>
+    </div>
+  );
+}
 
 // ── Tooltip Helper ──
 function Tooltip({ text }) {
@@ -46,6 +275,18 @@ function CalcResult({ result, onRecalc }) {
 
   return (
     <div className="calc-result" id="calcResult">
+      {result.estimadoPorCNAE && (
+        <div className="result-estimate-banner">
+          ⚠️ <b>Estimativa automática pelo setor (CNAE)</b> — você não informou dados de consumo, então calculamos pela média do seu setor × faturamento. Informe seus dados reais para refinar o diagnóstico.
+        </div>
+      )}
+
+      {/* PLANO DE AÇÃO — o produto primeiro */}
+      <ActionPlanCard result={result} />
+
+      {/* BENCHMARK SETORIAL */}
+      <BenchmarkCard result={result} />
+
       <div className="bento-grid">
         {/* DQS Score */}
         <div className="bento-box highlight">
@@ -122,20 +363,20 @@ function CalcResult({ result, onRecalc }) {
           </div>
         </div>
 
-        {/* CTAs */}
-        <div className="bento-box highlight" style={{ background: 'transparent', border: 'none', boxShadow: 'none', padding: 0, flexDirection: 'row', gap: '16px' }}>
+        {/* CTAs secundários — o CTA primário está no Plano de Ação (topo) */}
+        <div className="bento-box highlight" style={{ background: 'transparent', border: 'none', boxShadow: 'none', padding: 0, flexDirection: 'row', gap: '12px', flexWrap: 'wrap' }}>
           <button
-            className="btn btn-primary"
+            className="btn btn-secondary"
             onClick={handlePreReport}
             disabled={preReportVisible}
-            style={{ flex: 1, justifyContent: 'center', padding: '20px', fontSize: '1.1rem' }}
+            style={{ flex: 1, justifyContent: 'center', padding: '14px', fontSize: '0.95rem' }}
           >
-            {preReportVisible ? '✅ Pré-Relatório Gerado!' : 'Receber Meu Plano de Economia'}
+            {preReportVisible ? '✅ Pré-Relatório Gerado!' : '📧 Receber pré-relatório por e-mail'}
           </button>
-          <a className="btn btn-whatsapp" href={waURL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, justifyContent: 'center', padding: '20px', fontSize: '1.1rem' }}>
-            Falar com Especialista
+          <a className="btn btn-secondary" href={waURL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, justifyContent: 'center', padding: '14px', fontSize: '0.95rem' }}>
+            💬 Dúvidas? Fale no WhatsApp
           </a>
-          <button className="btn btn-secondary" onClick={onRecalc} style={{ flex: '0 0 auto', padding: '20px' }}>
+          <button className="btn btn-secondary" onClick={onRecalc} style={{ flex: '0 0 auto', padding: '14px', fontSize: '0.95rem' }}>
             ↺ Recalcular
           </button>
         </div>
@@ -214,7 +455,7 @@ function CalcResult({ result, onRecalc }) {
             </div>
           </div>
           <div className="pre-report-footer">
-            <p>🔒 Este pré-relatório foi enviado para o e-mail informado. Para obter o relatório completo, agende sua call de diagnóstico.</p>
+            <p>🔒 Este pré-relatório foi enviado para o e-mail informado. Para o relatório completo, o simulador de ROI e seu selo, <a href="/register" style={{ color: 'var(--accent)', fontWeight: 700 }}>crie sua conta grátis →</a></p>
           </div>
         </div>
       )}
@@ -232,24 +473,22 @@ export default function Calculator() {
   const [showCBAMField, setShowCBAMField] = useState(false);
   const [faturamentoDisplay, setFaturamentoDisplay] = useState('');
 
-  // Usar ref para manter o step atual no escopo do resolver sem cache do useForm
-  const stepRef = useRef(currentStep);
-  stepRef.current = currentStep;
-
   const {
     register,
     handleSubmit,
     trigger,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm({
-    resolver: async (data, context, options) => {
-      // Usa o schema correto do step atual dinamicamente
-      return zodResolver(STEP_SCHEMAS[stepRef.current - 1])(data, context, options);
-    },
+    resolver: zodResolver(STEP_SCHEMAS[currentStep - 1]),
     mode: 'onTouched',
   });
+
+  // ── Meter ao Vivo: recalcula a cada resposta (matemática pura, <1ms) ──
+  const watchValues = watch();
+  const partial = useMemo(() => computePartialEstimates(watchValues), [watchValues]);
 
   // ── Navegação de Steps ──
   const goToStep = (n) => {
@@ -262,12 +501,18 @@ export default function Calculator() {
     if (valid && currentStep < TOTAL_STEPS) goToStep(currentStep + 1);
   };
 
+  // Permite avançar sem preencher a etapa atual. A validação continua
+  // normalmente no botão Próximo e na etapa final do cálculo.
+  const handleSkip = () => {
+    if (currentStep < TOTAL_STEPS) goToStep(currentStep + 1);
+  };
+
   const handlePrev = () => {
     if (currentStep > 1) goToStep(currentStep - 1);
   };
 
   const handleStepClick = (step) => {
-    goToStep(step);
+    if (step < currentStep) goToStep(step); // só volta, não pula
   };
 
   const handleRecalc = () => {
@@ -333,22 +578,7 @@ export default function Calculator() {
     const allData = getValues();
     const fullData = { ...allData, ...data, faturamento: faturamentoDisplay };
 
-    // Validação Global
-    const parseResult = calcFormSchema.safeParse(fullData);
-    if (!parseResult.success) {
-      // Procurar qual foi o primeiro passo que deu erro e pular pra ele
-      for (let i = 0; i < STEP_SCHEMAS.length; i++) {
-        const stepRes = STEP_SCHEMAS[i].safeParse(fullData);
-        if (!stepRes.success) {
-          goToStep(i + 1);
-          setTimeout(() => trigger(), 100); // Highlight no erro
-          return;
-        }
-      }
-      return;
-    }
-
-    // Validação mínima: ao menos um dado de consumo
+    // Sem dados de consumo? Nunca bloqueamos: estima pelas médias do setor (CNAE).
     const hasConsumption =
       parseFloat(fullData.eletricidade) > 0 ||
       parseFloat(fullData.gasolinaLitros) > 0 ||
@@ -356,12 +586,7 @@ export default function Calculator() {
       parseFloat(fullData.aguaM3) > 0 ||
       parseFloat(fullData.residuos) > 0;
 
-    if (!hasConsumption) {
-      setCurrentStep(2);
-      return;
-    }
-
-    const calc = calculateEmissions(fullData);
+    const calc = calculateEmissions(fullData, { estimarSeVazio: !hasConsumption });
     setResult(calc);
 
     // Enviar lead para o backend
@@ -376,7 +601,6 @@ export default function Calculator() {
         estimated_cost: Math.round(calc.custoTradicional),
         dqs_score: calc.dqsScore,
         pcr_seal: calc.pcrSeal,
-        raw_data: JSON.stringify(fullData),
       }),
     }).catch(err => console.warn('[DoubleDyn] Erro backend:', err));
 
@@ -416,6 +640,9 @@ export default function Calculator() {
         <p className="section-subtitle">Preencha os dados abaixo e receba um relatório personalizado com oportunidades de economia.</p>
 
         <div className="calc-wrapper">
+          {/* Meter ao Vivo — impacto acumulado por etapa */}
+          <LiveMeter partial={partial} />
+
           {/* Progress Bar */}
           <div className="calc-progress">
             <div className="progress-bar" style={{ '--progress': `${(currentStep / TOTAL_STEPS) * 100}%` }}></div>
@@ -427,7 +654,7 @@ export default function Calculator() {
                     key={name}
                     className={`progress-step${step === currentStep ? ' active' : step < currentStep ? ' done' : ''}`}
                     data-step={step}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: step < currentStep ? 'pointer' : 'default' }}
                     onClick={() => handleStepClick(step)}
                   >
                     <span>{step}</span> {name}
@@ -783,6 +1010,7 @@ export default function Calculator() {
             <div className="calc-actions">
               <button type="button" className="btn btn-secondary" id="btnPrev" style={{ display: currentStep > 1 ? 'inline-flex' : 'none' }} onClick={handlePrev}>← Voltar</button>
               <button type="button" className="btn btn-primary" id="btnNext" style={{ display: currentStep < TOTAL_STEPS ? 'inline-flex' : 'none' }} onClick={handleNext}>Próximo →</button>
+              <button type="button" className="btn btn-secondary btn-skip" id="btnSkip" style={{ display: currentStep < TOTAL_STEPS ? 'inline-flex' : 'none' }} onClick={handleSkip}>Pular etapa</button>
               <button type="submit" className="btn btn-primary btn-submit" id="btnSubmit" style={{ display: currentStep === TOTAL_STEPS ? 'inline-flex' : 'none' }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 Calcular Meu Impacto

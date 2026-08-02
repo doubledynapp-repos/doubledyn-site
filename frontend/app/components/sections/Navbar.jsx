@@ -21,14 +21,16 @@ export default function Navbar() {
           <span className="logo-text">DoubleDyn</span>
         </a>
         <ul className={`nav-links${isMenuOpen ? ' open' : ''}`} id="navLinks">
-          <li><a href="#problema" onClick={closeMenu}>O Problema</a></li>
-          <li><a href="#calculadora" onClick={closeMenu}>Calculadora</a></li>
-          <li><a href="#como-funciona" onClick={closeMenu}>Como Funciona</a></li>
-          <li><a href="#parceiros" onClick={closeMenu}>Parceiros</a></li>
-          <li><a href="#time" onClick={closeMenu}>Time</a></li>
-          <li><a href="#roadmap" onClick={closeMenu}>Roadmap</a></li>
-          <li><a href="/blog" onClick={closeMenu}>Blog</a></li>
-          <li><a href="#contato" className="nav-cta" onClick={closeMenu}>Fale Conosco</a></li>
+          <li><a href="/#problema" onClick={closeMenu}>O Problema</a></li>
+          <li><a href="/#calculadora" onClick={closeMenu}>Calculadora</a></li>
+          <li><a href="/#como-funciona" onClick={closeMenu}>Como Funciona</a></li>
+          <li><a href="/#parceiros" onClick={closeMenu}>Parceiros</a></li>
+          <li><a href="/#time" onClick={closeMenu}>Time</a></li>
+          <li><a href="/#roadmap" onClick={closeMenu}>Roadmap</a></li>
+          <li><a href="/metodologia" onClick={closeMenu}>Metodologia</a></li>
+          <li><a href="https://blog.doubledyn.com" onClick={closeMenu}>Blog</a></li>
+          <li><a href="/dashboard" className="nav-cta" onClick={closeMenu}>Dashboard</a></li>
+          <li><a href="/#contato" className="nav-cta" onClick={closeMenu}>Fale Conosco</a></li>
         </ul>
         <button
           className={`nav-toggle${isMenuOpen ? ' active' : ''}`}

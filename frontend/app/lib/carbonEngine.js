@@ -3,6 +3,14 @@
 // Fonte: GHG Protocol Brasil, IPCC AR6, MCTI 2024, ABNT NBR ISO 14064.
 
 // ===== CONSTANTES SETORIAIS =====
+// Benchmarks de intensidade (tCO₂e por R$ 1 mi de faturamento) — SEEG/GHG Protocol Brasil.
+// ⚠️ Mesmos valores do módulo benchmark.js (fonte única a consolidar na Fase 0).
+const BENCH_ESTIMATIVA = {
+  agro: 120, mineracao: 180, industria: 85, logistica: 110, construcao: 75,
+  servicos: 12, comercio: 25, tecnologia: 12, saude: 60, alimenticio: 60,
+  educacao: 12, outro: 60,
+};
+
 export const MEDIA_SETOR = {
   industria: 8.5, comercio: 2.1, servicos: 1.8, agro: 12.0,
   construcao: 6.5, logistica: 9.0, tecnologia: 1.2, saude: 3.5,
@@ -67,8 +75,10 @@ export const DADOS_MERCADO = {
 
 // ===== FATORES DE EMISSÃO (GHG Protocol Brasil + IPCC) =====
 const FATORES = {
-  // Eletricidade (tCO₂/MWh, grid BR 2024)
-  ELETRICIDADE: 0.0817,
+  // Eletricidade (tCO₂/MWh) — fator médio anual do SIN, MCTI/SIRENE 2025 (0,0461).
+  // Atualizado em 2026-08-01 (auditoria R1): o valor anterior 0,0817 era o fator de 2016.
+  // Fonte: gov.br/mcti/sirene — planilha "Fator Médio Anual (tCO2/MWh)".
+  ELETRICIDADE: 0.0461,
   // Combustíveis estacionários
   GLP: 2.983,         // kgCO₂/kg
   GAS_NATURAL: 2.07,  // kgCO₂/m³
@@ -111,9 +121,12 @@ function n(val) {
 /**
  * Calcula o impacto de carbono completo a partir dos dados do formulário.
  * @param {object} data - Dados validados pelo Zod schema da calculadora.
+ * @param {object} [opts] - Opções: { estimarSeVazio: boolean } — quando true e não há
+ *   dados de consumo, estima pelas médias setoriais (benchmark × faturamento) para que
+ *   o usuário que "não sabe" nunca fique bloqueado. O resultado marca `estimadoPorCNAE`.
  * @returns {object} Objeto com todos os resultados calculados.
  */
-export function calculateEmissions(data) {
+export function calculateEmissions(data, opts = {}) {
   // ── STEP 1: EMPRESA ──
   const empresa = data.empresa || 'Sua Empresa';
   const setor = data.setor || 'outro';
@@ -179,8 +192,17 @@ export function calculateEmissions(data) {
   const emissaoResiduos = emResiduosSolidos + emResiduosPerig;
 
   // ── TOTAL ──
-  const emissaoBase = emissaoEnergia + emissaoTransporte + emissaoInstalacoes + emissaoResiduos;
-  const margemSeguranca = emissaoBase * 0.15;
+  let emissaoBase = emissaoEnergia + emissaoTransporte + emissaoInstalacoes + emissaoResiduos;
+
+  // ── MODO ESTIMATIVA POR SETOR (usuário que "não sabe" nunca fica bloqueado) ──
+  const estimadoPorCNAE = Boolean(opts?.estimarSeVazio) && emissaoBase < 0.001;
+  if (estimadoPorCNAE) {
+    const fat = parseBRL(data.faturamento);
+    const revM = fat > 0 ? fat / 1e6 : 1;
+    emissaoBase = (BENCH_ESTIMATIVA[setor] || BENCH_ESTIMATIVA.outro) * revM;
+  }
+
+  let margemSeguranca = emissaoBase * 0.15;
   const totalEmissao = emissaoBase + margemSeguranca;
 
   // ── DQS SCORE ──
@@ -337,12 +359,13 @@ export function calculateEmissions(data) {
     `> Mercado Tradicional: ${formatBRL(custoTradicional)}`,
     `> Projeção 5 anos (inação): ${formatBRL(custoTotal5Anos)}`,
     `> Pacote DoubleDyn: *Sob Consulta*`, `> *Economia Estimada: Até 70%*`, ``,
-    `Gostaria de agendar uma Call de Diagnóstico com um especialista.`,
+    `Gostaria de criar uma conta gratuita e ver meu plano de ação completo com o simulador de ROI.`,
+
   ].filter(l => l !== '').join('\n');
 
   return {
     // Empresa
-    empresa, setor, funcionarios,
+    empresa, setor, funcionarios, estimadoPorCNAE,
     // Categorias de emissão
     emissaoEnergia, emissaoTransporte, emissaoInstalacoes, emissaoResiduos,
     emissaoBase, margemSeguranca, totalEmissao,
@@ -368,5 +391,65 @@ export function calculateEmissions(data) {
     nomeContato, emailContato, telefone, cnpj, cidade,
     // WhatsApp
     waMsg,
+  };
+}
+
+// ===== ESTIMATIVA PARCIAL AO VIVO (Live Meter) =====
+// Recalcula as emissões por categoria apenas com o que já foi preenchido,
+// permitindo que o usuário acompanhe o impacto crescendo a cada etapa.
+// Usa os MESMOS fatores do calculateEmissions (fonte única de verdade).
+export function computePartialEstimates(values = {}) {
+  const v = values || {};
+  const n = (x) => parseFloat(x) || 0;
+
+  // ── ENERGIA (STEP 2) ──
+  const fonteEnergia = v.fonteEnergia || 'convencional';
+  let fatorEletrico = FATORES.ELETRICIDADE;
+  if (fonteEnergia === 'solar' || fonteEnergia === 'eolica') fatorEletrico *= 0.05;
+  else if (fonteEnergia === 'biomassa') fatorEletrico *= 0.15;
+  else if (fonteEnergia === 'misto') fatorEletrico *= 0.55;
+  const energia = (n(v.eletricidade) / 1000) * fatorEletrico * 12
+    + (n(v.glp) * FATORES.GLP / 1000) * 12
+    + (n(v.gasNatural) * FATORES.GAS_NATURAL / 1000) * 12
+    + (n(v.dieselGerador) * FATORES.DIESEL_EST / 1000) * 12
+    + (n(v.lenha) * FATORES.LENHA / 1000) * 12;
+
+  // ── FROTA (STEP 3) ──
+  const frota = (n(v.gasolinaLitros) * FATORES.GASOLINA / 1000) * 12
+    + (n(v.dieselLitros) * FATORES.DIESEL / 1000) * 12
+    + (n(v.gnvM3) * FATORES.GNV / 1000) * 12
+    + (n(v.viagensDomesticas) * FATORES.DIST_DOM * FATORES.AEREO_DOM) / 1000
+    + (n(v.viagensInternacionais) * FATORES.DIST_INT * FATORES.AEREO_INT) / 1000;
+
+  // ── INSTALAÇÕES (STEP 4) ──
+  const homeOfficeRatio = n(v.homeOffice) / 100;
+  const fatorPresencial = 1 - (homeOfficeRatio * 0.7);
+  const instalacoes = (n(v.aguaM3) * FATORES.AGUA / 1000) * 12 * fatorPresencial
+    + n(v.arCondicionado) * FATORES.AR_COND * fatorPresencial
+    + (FATORES.REFRIG[v.refrigeracao] || 0)
+    + (n(v.papelResmas) * FATORES.PAPEL / 1000) * 12 * fatorPresencial;
+
+  // ── RESÍDUOS (STEP 5) ──
+  const residuos = (n(v.residuos) * (1 - n(v.reciclagem) / 100) * FATORES.RESIDUOS) * 12
+    + (n(v.residuosPerigosos) * FATORES.RESIDUOS_PERIG / 1000) * 12;
+
+  const categorias = [
+    { nome: 'Energia', valor: energia },
+    { nome: 'Frota', valor: frota },
+    { nome: 'Instalações', valor: instalacoes },
+    { nome: 'Resíduos', valor: residuos },
+  ];
+
+  const totalBase = energia + frota + instalacoes + residuos;
+  const categoriasPreenchidas = categorias.filter(c => c.valor > 0).length;
+  const totalComMargem = totalBase * 1.15; // mesma margem do calculateEmissions (relatório final)
+
+  return {
+    categorias,
+    energia, frota, instalacoes, residuos, // acesso direto por categoria
+    totalBase,          // sem margem — os 15% de segurança entram no cálculo final
+    totalComMargem,
+    categoriasPreenchidas,
+    custoEstimado: 8500 + totalComMargem * 120, // mesma fórmula do relatório final (custoTradicional)
   };
 }

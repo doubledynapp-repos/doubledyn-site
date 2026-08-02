@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -p 4000",
+    "lint": "next lint",
+    "test": "node scripts/parity-test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
