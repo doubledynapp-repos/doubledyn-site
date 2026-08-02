@@ -1,0 +1,33 @@
+{
+  "name": "doubledyn",
+  "version": "1.0.0",
+  "description": "> \"Transformamos cultura local em impacto ambiental real.\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fealtycripto/doubledyn.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fealtycripto/doubledyn/issues"
+  },
+  "homepage": "https://github.com/Fealtycripto/doubledyn#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "dotenv": "^17.4.2",
+    "hardhat": "^2.28.6"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.6.1",
+    "axios": "^1.18.1",
+    "form-data": "^4.0.6",
+    "image-size": "^2.0.2",
+    "jsdom": "^29.1.1",
+    "puppeteer": "^25.3.0"
+  }
+}

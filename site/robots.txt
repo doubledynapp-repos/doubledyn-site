@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin-app.js
+Disallow: /admin-style.css
+
+Sitemap: https://doubledyn-site.vercel.app/sitemap.xml

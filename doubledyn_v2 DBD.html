@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoubleDyn - EcoToken</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080e14;
+            --bg-card: #0e1821;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-glow: rgba(52, 211, 153, 0.25);
+            --green: #34d399;
+            --green-d: #059669;
+            --blue: #60a5fa;
+            --yellow: #fbbf24;
+            --pink: #f472b6;
+            --dai: #f5a623;
+            --bct: #34d399;
+            --livre: #a78bfa;
+            --fg: #f0f6ff;
+            --muted: #7a94b0;
+            --r: 16px;
+            --rs: 10px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        .gl1,
+        .gl2 {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0
+        }
+
+        .gl1 {
+            width: 700px;
+            height: 700px;
+            top: -200px;
+            left: -200px;
+            background: radial-gradient(circle, rgba(52, 211, 153, .08), transparent 70%)
+        }
+
+        .gl2 {
+            width: 600px;
+            height: 600px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(96, 165, 250, .07), transparent 70%)
+        }
+
+        .grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px);
+            background-size: 48px 48px
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 60px
+        }
+
+        /* NAV */
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 0 18px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, .15), rgba(5, 150, 105, .08));
+            border: 1px solid var(--border-glow);
+            border-radius: 12px
+        }
+
+        .ld {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 100;
+            animation: sd 3s linear infinite;
+            transform-origin: center
+        }
+
+        @keyframes sd {
+            to {
+                stroke-dashoffset: -283
+            }
+        }
+
+        .logo h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #34d399, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -.5px
+        }
+
+        .logo-sub {
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .wallet {
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--muted);
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-family: 'Courier New', monospace
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-d), var(--blue));
+            border: 2px solid var(--border-glow)
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin: 24px 0 0;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 6px
+        }
+
+        .tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 11px 12px;
+            background: transparent;
+            border: none;
+            border-radius: var(--rs);
+            color: var(--muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s;
+            white-space: nowrap
+        }
+
+        .tab:hover {
+            color: var(--fg);
+            background: rgba(255, 255, 255, .04)
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(52, 211, 153, .18), rgba(5, 150, 105, .1));
+            color: var(--green);
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 20px rgba(52, 211, 153, .1)
+        }
+
+        .ti {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0
+        }
+
+        /* CONTENT */
+        .main {
+            margin-top: 28px
+        }
+
+        .sec {
+            display: none;
+            animation: fi .3s ease
+        }
+
+        .sec.active {
+            display: block
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .sh {
+            margin-bottom: 28px
+        }
+
+        .sh h2 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -.5px;
+            background: linear-gradient(90deg, var(--fg), #7a94b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .sh p {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: .93rem;
+            font-weight: 300
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px
+        }
+
+        .sc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 20px 24px;
+            transition: border-color .2s
+        }
+
+        .sc:hover {
+            border-color: var(--border-glow)
+        }
+
+        .sl {
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .sv {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 8px
+        }
+
+        .tb {
+            color: var(--blue)
+        }
+
+        .ty {
+            color: var(--yellow)
+        }
+
+        .tp {
+            color: var(--pink)
+        }
+
+        /* PROJECT CARDS */
+        .grid2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 20px
+        }
+
+        .pc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            overflow: hidden;
+            transition: transform .25s, border-color .25s, box-shadow .25s
+        }
+
+        .pc:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glow);
+            box-shadow: 0 16px 40px rgba(52, 211, 153, .1)
+        }
+
+        .pb {
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem
+        }
+
+        .cbody {
+            padding: 18px
+        }
+
+        .ctop {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px
+        }
+
+        .cat {
+            display: inline-flex;
+            align-items: center;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 999px
+        }
+
+        .cc {
+            background: rgba(52, 211, 153, .12);
+            color: var(--green)
+        }
+
+        .ce {
+            background: rgba(96, 165, 250, .12);
+            color: var(--blue)
+        }
+
+        .ch {
+            background: rgba(244, 114, 182, .12);
+            color: var(--pink)
+        }
+
+        .dbadge {
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(167, 139, 250, .12);
+            color: var(--livre);
+            border: 1px solid rgba(167, 139, 250, .2)
+        }
+
+        .cbody h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .cbody p {
+            font-size: .8rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 14px
+        }
+
+        .pbar-wrap {
+            margin-bottom: 12px
+        }
+
+        .pbar-lbl {
+            display: flex;
+            justify-content: space-between;
+            font-size: .72rem;
+            font-weight: 600;
+            margin-bottom: 5px
+        }
+
+        .pbar-t {
+            height: 5px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 99px;
+            overflow: hidden
+        }
+
+        .pbar-f {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--green-d), var(--green));
+            transition: width 1s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .lastro-sec {
+            margin-bottom: 14px
+        }
+
+        .lastro-lbl {
+            display: flex;
+            justify-content: space-between;
+            font-size: .68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 6px
+        }
+
+        .lbar {
+            display: flex;
+            height: 8px;
+            border-radius: 99px;
+            overflow: hidden;
+            gap: 2px
+        }
+
+        .ls {
+            height: 100%;
+            border-radius: 99px
+        }
+
+        .lb-bct {
+            background: var(--bct)
+        }
+
+        .lb-dai {
+            background: var(--dai)
+        }
+
+        .lb-lib {
+            background: var(--livre)
+        }
+
+        .lleg {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px
+        }
+
+        .ldot {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: .68rem;
+            color: var(--muted)
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .cfoot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border)
+        }
+
+        .tprice {
+            font-size: .78rem;
+            color: var(--muted)
+        }
+
+        .tprice strong {
+            color: var(--blue);
+            font-size: .95rem
+        }
+
+        .btn-buy {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--green-d), var(--green));
+            border: none;
+            border-radius: var(--rs);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: .8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity .2s, transform .15s;
+            box-shadow: 0 4px 16px rgba(52, 211, 153, .3)
+        }
+
+        .btn-buy:hover {
+            opacity: .88;
+            transform: scale(1.03)
+        }
+
+        /* PORTFOLIO */
+        .port-hero {
+            background: linear-gradient(135deg, rgba(52, 211, 153, .12), rgba(5, 150, 105, .06));
+            border: 1px solid var(--border-glow);
+            border-radius: var(--r);
+            padding: 28px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .ph-lbl {
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 6px
+        }
+
+        .ph-big {
+            font-size: 2.4rem;
+            font-weight: 700
+        }
+
+        .ph-chg {
+            font-size: .9rem;
+            font-weight: 600;
+            margin-top: 4px
+        }
+
+        .ph-co2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--yellow)
+        }
+
+        .pgrid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            align-items: start
+        }
+
+        .pcard {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 24px
+        }
+
+        .pcard h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .htbl {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        .htbl th {
+            font-size: .68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            padding: 0 0 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .htbl td {
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            font-size: .85rem
+        }
+
+        .htbl tr:last-child td {
+            border-bottom: none
+        }
+
+        .hproj {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .hemoji {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem
+        }
+
+        .hname {
+            font-size: .87rem;
+            font-weight: 600
+        }
+
+        .hcat {
+            font-size: .7rem;
+            color: var(--muted)
+        }
+
+        .htok {
+            color: var(--blue);
+            font-weight: 700
+        }
+
+        .pos {
+            color: var(--green)
+        }
+
+        .neg {
+            color: var(--pink)
+        }
+
+        .btn-sell {
+            padding: 5px 12px;
+            background: transparent;
+            border: 1px solid rgba(244, 114, 182, .3);
+            border-radius: var(--rs);
+            color: var(--pink);
+            font-family: 'Outfit', sans-serif;
+            font-size: .72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s
+        }
+
+        .btn-sell:hover {
+            background: rgba(244, 114, 182, .08)
+        }
+
+        .alleg {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .alitem {
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .alleft {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .8rem;
+            color: var(--muted)
+        }
+
+        .albar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 0 8px
+        }
+
+        .albarf {
+            height: 100%;
+            border-radius: 99px
+        }
+
+        .alpct {
+            font-size: .82rem;
+            font-weight: 700;
+            min-width: 36px;
+            text-align: right
+        }
+
+        /* SIMULATOR */
+        .simwrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start
+        }
+
+        .simcard {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 28px
+        }
+
+        .simcard h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px
+        }
+
+        .sf {
+            margin-bottom: 18px
+        }
+
+        .sf label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted);
+            margin-bottom: 8px
+        }
+
+        .sf input,
+        .sf select {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: var(--rs);
+            color: var(--fg);
+            font-family: 'Outfit', sans-serif;
+            font-size: .93rem;
+            outline: none;
+            transition: border-color .2s
+        }
+
+        .sf input:focus,
+        .sf select:focus {
+            border-color: var(--border-glow)
+        }
+
+        .sf select option {
+            background: #0e1821
+        }
+
+        .rrow {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .rrow input[type=range] {
+            flex: 1;
+            accent-color: var(--green);
+            height: 4px
+        }
+
+        .rval {
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--green);
+            min-width: 44px;
+            text-align: right
+        }
+
+        .btn-sim {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--green-d), var(--green));
+            border: none;
+            border-radius: var(--rs);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: opacity .2s;
+            box-shadow: 0 4px 20px rgba(52, 211, 153, .3)
+        }
+
+        .btn-sim:hover {
+            opacity: .88
+        }
+
+        .simres {
+            display: none
+        }
+
+        .simres.on {
+            display: block
+        }
+
+        .reshero {
+            text-align: center;
+            padding: 22px 0 18px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 18px
+        }
+
+        .reshero .rl {
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 5px
+        }
+
+        .reshero .rv {
+            font-size: 2.3rem;
+            font-weight: 700
+        }
+
+        .reshero .rs {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 3px
+        }
+
+        .resrows {
+            display: flex;
+            flex-direction: column;
+            gap: 11px
+        }
+
+        .resrow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .resrow .rlab {
+            font-size: .8rem;
+            color: var(--muted)
+        }
+
+        .resrow .rval {
+            font-size: .88rem;
+            font-weight: 700
+        }
+
+        .disc {
+            font-size: .67rem;
+            color: var(--muted);
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            line-height: 1.5
+        }
+
+        .arcleg {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px
+        }
+
+        .arcitem {
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .arcleft {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .8rem;
+            color: var(--muted)
+        }
+
+        .arcpct {
+            font-size: .84rem;
+            font-weight: 700
+        }
+
+        /* ONG FORM */
+        .fwrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 32px;
+            max-width: 680px
+        }
+
+        .fg {
+            margin-bottom: 20px
+        }
+
+        .frow {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px
+        }
+
+        label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: var(--rs);
+            color: var(--fg);
+            font-family: 'Outfit', sans-serif;
+            font-size: .93rem;
+            outline: none;
+            transition: border-color .2s
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--border-glow)
+        }
+
+        input::placeholder {
+            color: var(--muted)
+        }
+
+        select option {
+            background: #0e1821
+        }
+
+        .upbox {
+            border: 1.5px dashed rgba(52, 211, 153, .25);
+            border-radius: var(--rs);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: .85rem;
+            text-align: center;
+            transition: border-color .2s, background .2s
+        }
+
+        .upbox:hover {
+            border-color: var(--green);
+            background: rgba(52, 211, 153, .04)
+        }
+
+        .btn-p {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--green-d), var(--green));
+            border: none;
+            border-radius: var(--rs);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(52, 211, 153, .35);
+            transition: opacity .2s, transform .15s
+        }
+
+        .btn-p:hover {
+            opacity: .9;
+            transform: translateY(-1px)
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center
+        }
+
+        .modal.on {
+            display: flex
+        }
+
+        .mc {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--r);
+            padding: 48px 40px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            animation: pi .35s cubic-bezier(.34, 1.56, .64, 1);
+            box-shadow: 0 0 60px rgba(52, 211, 153, .15)
+        }
+
+        @keyframes pi {
+            from {
+                transform: scale(.85);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .si {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(52, 211, 153, .15), rgba(5, 150, 105, .1));
+            border: 2px solid var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: var(--green)
+        }
+
+        .si svg {
+            width: 34px;
+            height: 34px
+        }
+
+        .mc h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 12px
+        }
+
+        .mc p {
+            color: var(--muted);
+            font-size: .9rem;
+            line-height: 1.6;
+            margin-bottom: 6px
+        }
+
+        .mc p strong {
+            color: var(--green)
+        }
+
+        .msub {
+            font-size: .8rem !important;
+            margin-bottom: 28px !important
+        }
+
+        .btn-s {
+            padding: 12px 28px;
+            background: transparent;
+            border: 1.5px solid var(--border-glow);
+            border-radius: var(--rs);
+            color: var(--green);
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s
+        }
+
+        .btn-s:hover {
+            background: rgba(52, 211, 153, .08)
+        }
+
+        /* CHECKOUT STYLES */
+        .checkout-box {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .co-input {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: var(--rs);
+            padding: 12px 16px;
+            transition: border-color .2s;
+        }
+
+        .co-input:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 10px rgba(52, 211, 153, .1);
+        }
+
+        .co-input span {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-right: 12px;
+        }
+
+        .co-input input {
+            border: none;
+            background: transparent;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            padding: 0;
+            width: 100%;
+            outline: none;
+        }
+
+        .co-details {
+            background: #080e14;
+            border: 1px solid var(--border);
+            border-radius: var(--rs);
+            padding: 16px;
+            font-size: .85rem;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        .co-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .co-row.tot {
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            margin-top: 10px;
+            margin-bottom: 0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .val-pos {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        @media(max-width:768px) {
+
+            .stats,
+            .simwrap,
+            .pgrid {
+                grid-template-columns: 1fr
+            }
+
+            .frow {
+                grid-template-columns: 1fr
+            }
+
+            .tabs {
+                flex-wrap: wrap
+            }
+
+            .port-hero {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center
+            }
+        }
+
+        /* TICKER CSS */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 0;
+            position: fixed;
+            top: 0;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 160s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .ticker-item span.pos {
+            color: var(--green);
+        }
+
+        .ticker-item span.neg {
+            color: var(--pink);
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(100vw);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .wrap {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ticker-wrap">
+        <div class="ticker" id="crypto-ticker">Carregando dados do mercado cripto em tempo real... ⏳</div>
+    </div>
+    <div class="gl1"></div>
+    <div class="gl2"></div>
+    <div class="grid"></div>
+    <div class="wrap">
+
+        <header class="nav">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" width="32" height="32">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--green-d)" stroke-width="8" />
+                        <circle cx="50" cy="50" r="45" fill="none" class="ld" stroke="var(--green)" stroke-width="8" />
+                        <path d="M20 50L80 50M50 20L50 80" stroke="var(--green-d)" stroke-width="8"
+                            stroke-linecap="round" />
+                        <path d="M30 30L50 50L70 30" stroke="var(--green)" stroke-width="6" fill="none" />
+                    </svg>
+                </div>
+                <div>
+                    <h1>Doubledyn</h1>
+                    <span class="logo-sub">EcoToken</span>
+                </div>
+            </div>
+            <div class="user">
+                <span class="wallet">0x1a...f9B2</span>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="market">
+                <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+                Mercado ESG
+            </button>
+            <button class="tab" data-tab="port">
+                <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+                Portfólio
+            </button>
+            <button class="tab" data-tab="sim">
+                <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+                Farming & APY
+            </button>
+            <button class="tab" data-tab="ong">
+                <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg>
+                Inscrever ONG
+            </button>
+            <button class="tab" data-tab="liquidity">
+                <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+                Pool de Liquidez
+            </button>
+        </nav>
+
+        <main class="main">
+
+            <!-- MARKET -->
+            <section id="market" class="sec active">
+                <div class="sh">
+                    <h2>Projetos de Impacto Disponíveis</h2>
+                    <p>EcoTokens lastreados em BCT (Toucan) + DAI — verificados on-chain, totalmente descentralizados.
+                    </p>
+                </div>
+                <div class="stats">
+                    <div class="sc"><span class="sl">Valor do EcoToken (DBD)</span>
+                        <div class="sv tb">R$ 15,40</div>
+                    </div>
+                    <div class="sc"><span class="sl">Total Verificado</span>
+                        <div class="sv ty">+450 tons CO₂</div>
+                    </div>
+                    <div class="sc"><span class="sl">Projetos Ativos</span>
+                        <div class="sv tp">12</div>
+                    </div>
+                </div>
+                <div class="grid2" id="proj-cont"></div>
+            </section>
+
+            <!-- PORTFOLIO -->
+            <section id="port" class="sec">
+                <div class="sh">
+                    <h2>Meu Portfólio</h2>
+                    <p>Acompanhe seus EcoTokens, retorno e impacto real gerado on-chain.</p>
+                </div>
+                <div class="port-hero">
+                    <div>
+                        <div class="ph-lbl">Valor Total do Portfólio</div>
+                        <div class="ph-big" id="pt">R$ 0,00</div>
+                        <div class="ph-chg pos" id="pch">— sem posição</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="ph-lbl">CO₂ Compensado</div>
+                        <div class="ph-co2" id="pco2">0 tons</div>
+                        <div style="font-size:.76rem;color:var(--muted);margin-top:4px">via Toucan Protocol</div>
+                    </div>
+                </div>
+                <div class="pgrid">
+                    <div class="pcard">
+                        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)"
+                                stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" />
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>Holdings</h3>
+                        <table class="htbl">
+                            <thead>
+                                <tr>
+                                    <th>Projeto</th>
+                                    <th>Tokens</th>
+                                    <th>Valor</th>
+                                    <th>Var.</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="hbody">
+                                <tr>
+                                    <td colspan="5" style="color:var(--muted);font-size:.83rem;padding:18px 0">Nenhum
+                                        investimento ainda.
+                                        Compre no Mercado ESG!</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pcard">
+                        <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>Alocação</h3>
+                        <div style="display:flex;justify-content:center;margin:14px 0">
+                            <svg width="110" height="110" viewBox="0 0 110 110" id="donut">
+                                <circle cx="55" cy="55" r="42" fill="none" stroke="rgba(255,255,255,.05)"
+                                    stroke-width="14" />
+                                <text x="55" y="51" text-anchor="middle" font-family="Outfit" font-size="13"
+                                    font-weight="700" fill="#f0f6ff" id="dpct">0</text>
+                                <text x="55" y="65" text-anchor="middle" font-family="Outfit" font-size="9"
+                                    fill="#7a94b0">tokens</text>
+                            </svg>
+                        </div>
+                        <div class="alleg" id="alleg">
+                            <div style="font-size:.8rem;color:var(--muted);text-align:center">Faça seus primeiros
+                                investimentos</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIMULATOR -->
+            <section id="sim" class="sec">
+                <div class="sh">
+                    <h2>Simulador DeFi (Liquidez & APY)</h2>
+                    <p>Estime seus ganhos provendo liquidez ao par DBD-DAI no longo prazo.</p>
+                </div>
+                <div class="simwrap">
+                    <div class="simcard">
+                        <h3>⚙️️ Configuração do Pool</h3>
+                        <div class="sf"><label>DBD para Adicionar</label><input type="number" id="si" value="100"
+                                min="10" placeholder="Ex: 100"></div>
+                        <div class="sf"><label>DAI Necessário (~3.08:1)</label><input type="number" id="si-dai"
+                                value="308" readonly
+                                style="color:var(--dai);background:rgba(245,166,35,0.05);border-color:rgba(245,166,35,0.2)">
+                        </div>
+                        <div class="sf"><label>Período de Staking (Dias)</label>
+                            <select id="sh2">
+                                <option value="30">30 dias</option>
+                                <option value="90">90 dias</option>
+                                <option value="180">180 dias</option>
+                                <option value="365" selected>1 Ano (365 dias)</option>
+                            </select>
+                        </div>
+                        <div class="sf"><label>Projeção de APY do Pool</label>
+                            <div class="rrow"><input type="range" id="sg" min="5" max="50" value="18" step="1"><span
+                                    class="rval" id="sgv">18%</span></div>
+                        </div>
+                        <button class="btn-sim" id="bsim"
+                            style="background:linear-gradient(135deg, var(--livre), #7c3aed); box-shadow:0 4px 20px rgba(167, 139, 250, 0.35);">Calcular
+                            Rendimento →</button>
+                    </div>
+
+                    <div class="simcard simres" id="sres">
+                        <h3>📈 Projeção do Pool</h3>
+                        <div class="reshero">
+                            <div class="rl">Rendimento Bruto (USD)</div>
+                            <div class="rv" id="rret">$ 0.00</div>
+                            <div class="rs" id="rsub">em 365 dias</div>
+                        </div>
+                        <div class="resrows">
+                            <div class="resrow"><span class="rlab">Investimento Total Previsto</span><span
+                                    class="rval tb" id="rini">$
+                                    0.00</span></div>
+                            <div class="resrow"><span class="rlab">Recompensa Estimada (Staking/Taxas)</span><span
+                                    class="rval pos" id="rtax">+$ 0.00</span></div>
+                            <div class="resrow"><span class="rlab">Total Final</span><span class="rval" id="rfin">$
+                                    0.00</span></div>
+                            <div class="resrow"><span class="rlab">DBD Adquiridos no período</span><span class="rval ty"
+                                    id="rtok">0
+                                    DBD</span></div>
+                        </div>
+                        <div class="disc">⚠️️ O APY varia conforme o volume de swap, recompensas da plataforma e
+                            flutuação do preço.
+                            Simulação focada em métricas constantes.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ONG -->
+            <section id="ong" class="sec">
+                <div class="sh">
+                    <h2>Inscrever Novo Projeto</h2>
+                    <p>Tokenize seu impacto real. Transforme suas ações em EcoTokens e acesse capital justo.</p>
+                </div>
+                <div class="fwrap">
+                    <form id="pform">
+                        <div class="fg"><label>Nome da Ação/Projeto</label><input type="text" id="pname"
+                                placeholder="Ex: Reflorestamento da Nascente" required></div>
+                        <div class="frow">
+                            <div class="fg"><label>Categoria de Impacto</label>
+                                <select id="cat" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="carbon">Captura de Carbono</option>
+                                    <option value="education">Educação e Sociedade</option>
+                                    <option value="nature">Preservação Ambiental</option>
+                                    <option value="health">Saúde Comunitária</option>
+                                </select>
+                            </div>
+                            <div class="fg"><label>Meta (EcoTokens)</label><input type="number" id="pmeta"
+                                    placeholder="Ex: 5000" min="1" required></div>
+                        </div>
+                        <div class="fg"><label>Evidências On-Chain</label>
+                            <div class="upbox">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                Upload de fotos com GPS, recibos e relatórios auditáveis
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-p">Submeter para Auditoria e Tokenização</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- LIQUIDITY POOL -->
+            <section id="liquidity" class="sec">
+                <div class="sh">
+                    <h2>Pool de Liquidez (DBD-DAI)</h2>
+                    <p>Forneça liquidez combinando seus EcoTokens (DBD) com DAI. Ao congelar suas moedas na plataforma,
+                        você
+                        diminui a variação de mercado e ganha taxas de transação e recompensas em staking (APY).</p>
+                </div>
+
+                <div class="stats">
+                    <div class="sc"><span class="sl">TVL (Valor Total Bloqueado)</span>
+                        <div class="sv tb">$ 1.2M</div>
+                    </div>
+                    <div class="sc"><span class="sl">APY Estimado</span>
+                        <div class="sv ty">~ 18.5% ao ano</div>
+                    </div>
+                    <div class="sc"><span class="sl">Sua Cota do Pool</span>
+                        <div class="sv tp" id="liq-share">0.00%</div>
+                    </div>
+                </div>
+
+                <div class="simwrap">
+                    <div class="simcard">
+                        <h3>💧 Adicionar Liquidez</h3>
+                        <p style="font-size: .85rem; color: var(--muted); margin-bottom: 20px;">Adicione tokens no par
+                            de forma
+                            balanceada. A proporção é de ~ R$ 15,40 (DBD) para R$ 15,40 (DAI). 1 DAI ≈ R$ 5,00.</p>
+
+                        <div class="sf">
+                            <label>Quantidade de EcoTokens (DBD)</label>
+                            <div class="checkout-box" style="margin-top:0">
+                                <div class="co-input">
+                                    <span>DBD</span>
+                                    <input type="number" id="liq-dd" value="10" min="1" step="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align:center; margin: 10px 0; color:var(--muted)">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+
+                        <div class="sf">
+                            <label>Quantidade Requerida de DAI</label>
+                            <div class="checkout-box" style="margin-top:0">
+                                <div class="co-input"
+                                    style="background: rgba(245,166,35,0.05); border-color: rgba(245,166,35,0.2);">
+                                    <span style="color:var(--dai)">DAI</span>
+                                    <input type="number" id="liq-dai" value="30.8" readonly style="color:var(--dai)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-p" id="btn-add-liq"
+                            style="margin-top:10px; background:linear-gradient(135deg, var(--livre), #7c3aed); box-shadow:0 4px 20px rgba(167, 139, 250, 0.35);">Depositar
+                            e Receber LP Tokens</button>
+                    </div>
+
+                    <div class="simcard">
+                        <h3>Minhas Posições de Liquidez</h3>
+
+                        <table class="htbl" style="margin-top:15px">
+                            <thead>
+                                <tr>
+                                    <th>Ativos Alocados</th>
+                                    <th>LP Tokens</th>
+                                    <th>Ganhos (APY)</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="liq-body">
+                                <tr>
+                                    <td colspan="4"
+                                        style="color:var(--muted);font-size:.83rem;padding:18px 0;text-align:center">
+                                        Você
+                                        ainda não proveu liquidez.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE CHECKOUT FINANCEIRO -->
+    <div id="checkout-modal" class="modal">
+        <div class="mc" style="max-width: 480px;">
+            <h2 style="text-align: left; margin-bottom: 4px;">Finalizar Investimento</h2>
+            <p style="text-align: left; margin-bottom: 20px;" id="co-proj-name">Projeto de Reflorestamento</p>
+
+            <div class="checkout-box">
+                <label>Valor do Aporte (R$)</label>
+                <div class="co-input">
+                    <span>R$</span>
+                    <input type="number" id="co-amount" value="1000" min="10" step="10">
+                </div>
+            </div>
+
+            <div class="co-details">
+                <div class="co-row"><span>Cotação EcoToken (DBD)</span><span id="co-price">R$ 15,40</span></div>
+                <div class="co-row"><span>Taxa de Gás (Blockchain)</span><span>R$ 0,00 <del style="font-size:.7rem">R$
+                            4,50</del></span></div>
+                <div class="co-row"><span>Impacto Ambiental</span><span class="val-pos" id="co-co2">~ 51.9 tons de
+                        CO₂</span>
+                </div>
+                <div class="co-row tot"><span>Tokens a Receber</span><span class="val-pos" id="co-tokens">64.93
+                        DBD</span></div>
+            </div>
+
+            <button class="btn-p" id="co-confirm">Confirmar e Assinar TX ⛓️️</button>
+            <button class="btn-s" style="width:100%; margin-top:12px; border:none; color:var(--muted)"
+                id="co-cancel">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE SUCESSO -->
+    <div id="modal" class="modal">
+        <div class="mc">
+            <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                </svg></div>
+            <h2>Transação On-Chain Concluída!</h2>
+            <p>Você investiu e recebeu <strong><span id="btok"></span> EcoTokens (DBD)</strong>.</p>
+            <p class="msub">Seu lastro foi protegido no protocolo Toucan BCT.</p>
+            <button class="btn-s" id="cmodal">Ir para o Portfólio Cripto</button>
+        </div>
+    </div>
+
+    <script>
+        const PROJ = [
+            { id: 0, e: '🌱', bg: 'linear-gradient(135deg,#064e3b,#065f46)', cat: 'carbon', cl: 'cc', catL: 'Captura de Carbono', name: 'Reflorestamento Nascente Verde', desc: 'Restauração de 120 hectares de mata nativa no bioma Cerrado com monitoramento GPS on-chain.', raised: 3200, goal: 5000, tp: 15.40, co2: 0.8, lastro: { bct: 70, dai: 20, livre: 10 } },
+            { id: 1, e: '📚', bg: 'linear-gradient(135deg,#1e3a5f,#1e40af)', cat: 'education', cl: 'ce', catL: 'Educação e Sociedade', name: 'Escola Digital Quilombo', desc: 'Inclusão digital para 300 crianças em comunidade quilombola com tablets e conectividade.', raised: 1800, goal: 4000, tp: 15.40, co2: 0.2, lastro: { bct: 50, dai: 30, livre: 20 } },
+            { id: 2, e: '🐋', bg: 'linear-gradient(135deg,#134e4a,#0f766e)', cat: 'nature', cl: 'cc', catL: 'Preservação Ambiental', name: 'Corredor Ecológico Costeiro', desc: 'Proteção de 80km de litoral no Nordeste com patrulhamento e sensores IoT integrados.', raised: 7100, goal: 8000, tp: 15.40, co2: 0.6, lastro: { bct: 65, dai: 15, livre: 20 } },
+            { id: 3, e: '💊', bg: 'linear-gradient(135deg,#4a044e,#701a75)', cat: 'health', cl: 'ch', catL: 'Saúde Comunitária', name: 'Clínica Itinerante Amazônia', desc: 'Atendimento médico preventivo para 2000 famílias em regiões sem acesso ao SUS.', raised: 2500, goal: 6000, tp: 15.40, co2: 0.1, lastro: { bct: 45, dai: 35, livre: 20 } },
+            { id: 4, e: '☀️️', bg: 'linear-gradient(135deg,#78350f,#b45309)', cat: 'carbon', cl: 'cc', catL: 'Captura de Carbono', name: 'Solar Favela Energia Limpa', desc: 'Instalação de painéis solares em 500 residências de baixa renda, reduzindo 900t CO₂/ano.', raised: 4400, goal: 7500, tp: 15.40, co2: 1.2, lastro: { bct: 75, dai: 15, livre: 10 } },
+            { id: 5, e: '🌊', bg: 'linear-gradient(135deg,#0c4a6e,#0284c7)', cat: 'nature', cl: 'cc', catL: 'Preservação Ambiental', name: 'Limpeza de Mananciais SP', desc: 'Despoluição de 3 mananciais na Grande São Paulo com mapeamento blockchain de resíduos.', raised: 950, goal: 3000, tp: 15.40, co2: 0.4, lastro: { bct: 60, dai: 25, livre: 15 } }
+        ];
+
+        const catColors = { carbon: '#34d399', education: '#60a5fa', nature: '#0d9488', health: '#f472b6' };
+        const catLabels = { carbon: 'Carbono', education: 'Educação', nature: 'Natureza', health: 'Saúde' };
+        const lastroCfg = {
+            conservative: { bct: 70, dai: 20, livre: 10, risk: '⬇ Baixo', rc: '#34d399' },
+            balanced: { bct: 60, dai: 20, livre: 20, risk: '➡ Médio', rc: '#fbbf24' },
+            aggressive: { bct: 50, dai: 10, livre: 40, risk: '⬆ Alto', rc: '#f472b6' }
+        };
+
+        let portfolio = {};
+
+        // RENDER PROJECTS
+        function renderProj() {
+            document.getElementById('proj-cont').innerHTML = PROJ.map(p => {
+                const pct = Math.round(p.raised / p.goal * 100);
+                return `<div class="pc">
+      <div class="pb" style="background:${p.bg}">${p.e}</div>
+      <div class="cbody">
+        <div class="ctop">
+          <span class="cat ${p.cl}">${p.catL}</span>
+          <span class="dbadge">⛓️ DeFi</span>
+        </div>
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="pbar-wrap">
+          <div class="pbar-lbl">
+            <span style="color:var(--green)">${p.raised.toLocaleString('pt-BR')} DBD</span>
+            <span style="color:var(--muted)">${pct}% · Meta: ${p.goal.toLocaleString('pt-BR')}</span>
+          </div>
+          <div class="pbar-t"><div class="pbar-f" style="width:0%" data-p="${pct}"></div></div>
+        </div>
+        <div class="lastro-sec">
+          <div class="lastro-lbl"><span>Composição do Lastro</span><span style="color:var(--livre)">descentralizado</span></div>
+          <div class="lbar">
+            <div class="ls lb-bct" style="width:${p.lastro.bct}%"></div>
+            <div class="ls lb-dai" style="width:${p.lastro.dai}%"></div>
+            <div class="ls lb-lib" style="width:${p.lastro.livre}%"></div>
+          </div>
+          <div class="lleg">
+            <div class="ldot"><div class="dot" style="background:var(--bct)"></div>BCT ${p.lastro.bct}%</div>
+            <div class="ldot"><div class="dot" style="background:var(--dai)"></div>DAI ${p.lastro.dai}%</div>
+            <div class="ldot"><div class="dot" style="background:var(--livre)"></div>Livre ${p.lastro.livre}%</div>
+          </div>
+        </div>
+        <div class="cfoot">
+          <div class="tprice">Por token<br><strong>R$ ${p.tp.toFixed(2)}</strong></div>
+          <button class="btn-buy" data-id="${p.id}">Investir →</button>
+        </div>
+      </div>
+    </div>`;
+            }).join('');
+            setTimeout(() => { document.querySelectorAll('.pbar-f').forEach(e => e.style.width = e.dataset.p + '%'); }, 80);
+
+            // Abre o Modal de Checkout com dados do Projeto
+            document.querySelectorAll('.btn-buy').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const p = PROJ[+btn.dataset.id];
+                    openCheckout(p);
+                });
+            });
+        }
+
+        let activeCheckoutProject = null;
+
+        function openCheckout(proj) {
+            activeCheckoutProject = proj;
+            document.getElementById('co-proj-name').textContent = proj.name;
+            document.getElementById('co-price').textContent = 'R$ ' + proj.tp.toFixed(2).replace('.', ',');
+            document.getElementById('checkout-modal').classList.add('on');
+            updateCheckoutMath();
+        }
+
+        function updateCheckoutMath() {
+            if (!activeCheckoutProject) return;
+            const p = activeCheckoutProject;
+            const investStr = document.getElementById('co-amount').value;
+            const invest = parseFloat(investStr) || 0;
+
+            let tokens = invest / p.tp;
+            let co2Impact = tokens * p.co2;
+
+            document.getElementById('co-tokens').textContent = tokens.toFixed(2) + ' DBD';
+            document.getElementById('co-co2').textContent = '~ ' + co2Impact.toFixed(1) + ' tons de CO₂';
+        }
+
+        document.getElementById('co-amount').addEventListener('input', updateCheckoutMath);
+
+        document.getElementById('co-cancel').addEventListener('click', () => {
+            document.getElementById('checkout-modal').classList.remove('on');
+        });
+
+        document.getElementById('co-confirm').addEventListener('click', () => {
+            if (!activeCheckoutProject) return;
+
+            const investStr = document.getElementById('co-amount').value;
+            const invest = parseFloat(investStr) || 0;
+            if (invest < 10) return alert('Investimento mínimo de R$ 10');
+
+            const p = activeCheckoutProject;
+            const tokens = parseFloat((invest / p.tp).toFixed(2));
+
+            // Simular transação blockchain
+            const btn = document.getElementById('co-confirm');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "Autorizando Smart Contract... ⏳";
+            btn.style.opacity = 0.7;
+
+            setTimeout(() => {
+                portfolio[p.id] = (portfolio[p.id] || 0) + tokens;
+                document.getElementById('btok').textContent = tokens.toFixed(2);
+
+                document.getElementById('checkout-modal').classList.remove('on');
+                document.getElementById('modal').classList.add('on');
+                renderPort();
+
+                btn.innerHTML = originalText;
+                btn.style.opacity = 1;
+                document.getElementById('co-amount').value = '1000'; // reset
+            }, 1200);
+        });
+
+        // RENDER PORTFOLIO
+        function renderPort() {
+            const ids = Object.keys(portfolio).map(Number);
+            const hbody = document.getElementById('hbody');
+            if (!ids.length) {
+                hbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted);font-size:.83rem;padding:18px 0">Nenhum investimento ainda. Compre no Mercado ESG!</td></tr>';
+                document.getElementById('pt').textContent = 'R$ 0,00';
+                document.getElementById('pch').textContent = '— sem posição';
+                document.getElementById('pco2').textContent = '0 tons';
+                document.getElementById('dpct').textContent = '0';
+                document.getElementById('alleg').innerHTML = '<div style="font-size:.8rem;color:var(--muted);text-align:center">Faça seus primeiros investimentos</div>';
+                return;
+            }
+            let totTok = 0, totCO2 = 0;
+            const catT = {};
+            hbody.innerHTML = ids.map(id => {
+                const p = PROJ[id]; const q = portfolio[id];
+                const val = (q * p.tp).toFixed(2).replace('.', ',');
+                const chg = ((Math.random() * 30 - 5)).toFixed(2);
+                totTok += q; totCO2 += q * p.co2;
+                catT[p.cat] = (catT[p.cat] || 0) + q;
+                return `<tr>
+      <td><div class="hproj"><div class="hemoji" style="background:${p.bg}">${p.e}</div><div><div class="hname">${p.name.split(' ').slice(0, 2).join(' ')}</div><div class="hcat">${p.catL}</div></div></div></td>
+      <td class="htok">${q} DBD</td>
+      <td style="font-weight:700">R$ ${val}</td>
+      <td class="${parseFloat(chg) >= 0 ? 'pos' : 'neg'}">${parseFloat(chg) >= 0 ? '▲' : '▼'} ${Math.abs(chg)}%</td>
+      <td style="text-align:right"><button class="btn-burn" data-burn="${id}">Aposentar</button><button class="btn-sell" data-sell="${id}">Vender</button></td>
+    </tr>`;
+            }).join('');
+            document.querySelectorAll('.btn-sell').forEach(b => {
+                b.addEventListener('click', () => { delete portfolio[+b.dataset.sell]; renderPort(); });
+            });
+            const tv = (totTok * 15.40).toFixed(2).replace('.', ',');
+            const gain = (Math.random() * 20 + 5).toFixed(2);
+            document.getElementById('pt').textContent = 'R$ ' + tv;
+            document.getElementById('pch').textContent = `▲ +${gain}%`;
+            document.getElementById('pco2').textContent = totCO2.toFixed(1) + ' tons';
+            document.getElementById('dpct').textContent = totTok;
+            // alloc
+            document.getElementById('alleg').innerHTML = Object.entries(catT).map(([cat, q]) => {
+                const pct = Math.round(q / totTok * 100);
+                return `<div class="alitem">
+      <div class="alleft"><div class="dot" style="background:${catColors[cat]}"></div>${catLabels[cat]}</div>
+      <div class="albar"><div class="albarf" style="width:${pct}%;background:${catColors[cat]}"></div></div>
+      <div class="alpct" style="color:${catColors[cat]}">${pct}%</div>
+    </div>`;
+            }).join('');
+        }
+
+        // DONUT helper
+        function drawDonut(id, segs) {
+            const svg = document.getElementById(id);
+            svg.querySelectorAll('.as').forEach(e => e.remove());
+            const r = 42, cx = 55, cy = 55, circ = 2 * Math.PI * r;
+            let off = 0;
+            segs.forEach(s => {
+                const dash = s.p / 100 * circ;
+                const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                c.setAttribute('class', 'as');
+                c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', r);
+                c.setAttribute('fill', 'none'); c.setAttribute('stroke', s.c); c.setAttribute('stroke-width', 14);
+                c.setAttribute('stroke-dasharray', `${dash} ${circ - dash}`);
+                c.setAttribute('stroke-dashoffset', -off);
+                c.setAttribute('transform', `rotate(-90 ${cx} ${cy})`);
+                svg.appendChild(c);
+                off += dash;
+            });
+        }
+
+        // SIMULATOR DEFI
+        document.getElementById('si').addEventListener('input', (e) => {
+            const dbd = parseFloat(e.target.value) || 0;
+            document.getElementById('si-dai').value = (dbd * 3.08).toFixed(2);
+        });
+        document.getElementById('sg').addEventListener('input', function () { document.getElementById('sgv').textContent = this.value + '%'; });
+
+        document.getElementById('bsim').addEventListener('click', () => {
+            const dbd = parseFloat(document.getElementById('si').value) || 100;
+            const dai = parseFloat(document.getElementById('si-dai').value) || (dbd * 3.08);
+
+            const totalInvestimentoUSD = (dbd * 3.08) + dai; // assuming 1 DAI = 1 USD roughly
+
+            const dias = parseInt(document.getElementById('sh2').value);
+            const apy = parseFloat(document.getElementById('sg').value) / 100;
+
+            // Calculate earnings based on APY
+            const rendimentoAnual = totalInvestimentoUSD * apy;
+            const rendimentoPeriodo = rendimentoAnual * (dias / 365);
+
+            // Equivalent reward in DBD format
+            const dbdGained = rendimentoPeriodo / 3.08;
+
+            const totalFinal = totalInvestimentoUSD + rendimentoPeriodo;
+
+            document.getElementById('rret').textContent = '$ ' + rendimentoPeriodo.toFixed(2);
+            document.getElementById('rret').style.color = 'var(--green)';
+            document.getElementById('rsub').textContent = 'em ' + dias + ' dias';
+
+            document.getElementById('rini').textContent = '$ ' + totalInvestimentoUSD.toFixed(2);
+            document.getElementById('rtax').textContent = '+$ ' + rendimentoPeriodo.toFixed(2);
+            document.getElementById('rfin').textContent = '$ ' + totalFinal.toFixed(2);
+            document.getElementById('rtok').textContent = '+ ' + dbdGained.toFixed(2) + ' DBD adicionais';
+
+            document.getElementById('sres').classList.add('on');
+        });
+
+        // TABS
+        document.querySelectorAll('.tab').forEach(b => {
+            b.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('.sec').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                document.getElementById(b.dataset.tab).classList.add('active');
+            });
+        });
+
+        // MODAL
+        document.getElementById('cmodal').addEventListener('click', () => {
+            document.getElementById('modal').classList.remove('on');
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.sec').forEach(x => x.classList.remove('active'));
+            document.querySelector('[data-tab="port"]').classList.add('active');
+            document.getElementById('port').classList.add('active');
+        });
+        document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('on'); });
+        document.getElementById('pform').addEventListener('submit', e => { e.preventDefault(); alert('✅ Projeto submetido para auditoria!'); e.target.reset(); });
+
+        // LIQUIDITY POOL LOGIC
+        let userLiq = { dd: 0, dai: 0, lptokens: 0 };
+        const ddToDaiRatio = 3.08; // 15.4 BRL (DBD) / 5.0 BRL (DAI) =  3.08 DAI per DBD
+
+        document.getElementById('liq-dd').addEventListener('input', (e) => {
+            const dd = parseFloat(e.target.value) || 0;
+            document.getElementById('liq-dai').value = (dd * ddToDaiRatio).toFixed(2);
+        });
+
+        function renderLiquidity() {
+            const tbody = document.getElementById('liq-body');
+            if (userLiq.lptokens === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);font-size:.83rem;padding:18px 0;text-align:center">Você ainda não proveu liquidez.</td></tr>';
+                document.getElementById('liq-share').textContent = '0.00%';
+                return;
+            }
+
+            tbody.innerHTML = `
+        <tr>
+          <td>
+            <div style="font-weight:700;font-size:.9rem">${userLiq.dd.toFixed(2)} DBD</div>
+            <div style="color:var(--dai);font-size:.8rem;font-weight:700">+ ${userLiq.dai.toFixed(2)} DAI</div>
+          </td>
+          <td style="color:var(--livre);font-weight:700">${userLiq.lptokens.toFixed(2)} LP</td>
+          <td style="color:var(--green);font-weight:700">+$ 0.12</td>
+          <td style="text-align:right">
+            <button class="btn-sell" id="btn-remove-liq" style="border-color:var(--pink);color:var(--pink)">Remover</button>
+          </td>
+        </tr>
+      `;
+            document.getElementById('liq-share').textContent = '0.04%';
+
+            document.getElementById('btn-remove-liq').addEventListener('click', () => {
+                if (confirm('Tem certeza que deseja remover sua liquidez? Seus tokens retornarão para a carteira.')) {
+                    userLiq = { dd: 0, dai: 0, lptokens: 0 };
+                    renderLiquidity();
+                    alert('Liquidez removida com sucesso!');
+                }
+            });
+        }
+
+        document.getElementById('btn-add-liq').addEventListener('click', () => {
+            const dd = parseFloat(document.getElementById('liq-dd').value) || 0;
+            const dai = parseFloat(document.getElementById('liq-dai').value) || 0;
+            if (dd <= 0) return alert('Quantidade inválida.');
+
+            const btn = document.getElementById('btn-add-liq');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "Depositando Tokens e Assinando Contrato... ⏳";
+            btn.style.opacity = 0.7;
+
+            setTimeout(() => {
+                userLiq.dd += dd;
+                userLiq.dai += dai;
+                userLiq.lptokens += (dd + (dai / ddToDaiRatio)) * 1.5; // Mock LP calculation
+
+                btn.innerHTML = originalText;
+                btn.style.opacity = 1;
+                renderLiquidity();
+                alert('Liquidez provida com sucesso! LP Tokens adicionados à sua carteira.');
+            }, 1500);
+        });
+
+        document.body.insertAdjacentHTML("beforeend", `
+<style>
+  .btn-burn { padding: 5px 12px; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.4); border-radius: var(--rs); color: var(--green); font-family: 'Outfit', sans-serif; font-size: .72rem; font-weight: 700; cursor: pointer; transition: background .2s; margin-right: 6px; }
+  .btn-burn:hover { background: rgba(52, 211, 153, 0.25) }
+</style>
+<div id="modal-cert" class="modal">
+  <div class="mc" style="max-width:550px">
+    <div id="cert-content" style="border:2px solid var(--green); border-radius:var(--r); padding:30px; background: linear-gradient(135deg, rgba(5,150,105,0.2), #080e14); margin-bottom:20px; text-align:center">
+      <h1 style="color:var(--green); font-size:1.6rem; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px">Certificado de Impacto</h1>
+      <div style="font-size:1.2rem; font-weight:700; margin-bottom:10px" id="cert-proj">Projeto X</div>
+      <p style="font-size:.9rem; line-height:1.6; margin-bottom:15px; color:var(--fg)">A entidade corporativa <strong>0x1a...f9B2</strong> compensou publicamente <strong id="cert-co2" style="color:var(--yellow)">X tons</strong> de carbono e impactos equivalentes ao aposentar (queimar) <strong id="cert-tok" style="color:var(--green)">X DBD</strong> tokens irreversivelmente da rede DoubleDyn.</p>
+      <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; font-size:.65rem; color:var(--muted); word-break:break-all; font-family:monospace">Blockchain TX / Proof (Simulado):<br>0x9f86d081884c7d659a2f...</div>
+    </div>
+    <button class="btn-s" id="download-cert" style="width:100%; background:var(--green-d); color:#fff; border-color:var(--green)">Baixar Certificado para o PC</button>
+    <button class="btn-s" id="close-cert" style="width:100%; padding:8px; margin-top:10px; border:none; font-size:.8rem; color:var(--muted)">Fechar</button>
+  </div>
+</div>
+    `);
+
+        document.getElementById('close-cert').addEventListener('click', () => document.getElementById('modal-cert').classList.remove('on'));
+        document.getElementById('modal-cert').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('on'); });
+
+        document.addEventListener('click', e => {
+            if (e.target && e.target.classList.contains('btn-burn')) {
+                const b = e.target;
+                const id = +b.dataset.burn;
+                const q = portfolio[id];
+                if (!q) return;
+                const p = PROJ[id];
+                document.getElementById('cert-proj').textContent = p.name;
+                document.getElementById('cert-co2').textContent = (q * p.co2).toFixed(1) + ' tons';
+                document.getElementById('cert-tok').textContent = q + ' DBD';
+                delete portfolio[id];
+                renderPort();
+                document.getElementById('modal-cert').classList.add('on');
+            }
+        });
+
+        document.getElementById('download-cert').addEventListener('click', () => {
+            const certHTML = document.getElementById('cert-content').outerHTML;
+            const completeHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Certificado de Impacto DoubleDyn</title><style>body{background:#080e14;color:#f0f6ff;font-family:sans-serif;padding:50px;display:flex;justify-content:center;} .mc{max-width:600px;width:100%;} :root{--green:#34d399;--yellow:#fbbf24;--muted:#7a94b0;}</style></head><body><div class="mc">${certHTML}</div></body></html>`;
+            const blob = new Blob([completeHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Certificado_DoubleDyn_' + new Date().getTime() + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            const btn = document.getElementById('download-cert');
+            btn.textContent = "Baixado com sucesso! (Olhe nos Downloads)";
+            setTimeout(() => btn.textContent = "Baixar Certificado para o PC", 4000);
+        });
+
+        renderProj(); renderPort();
+
+        // FETCH TICKER DATA
+        async function loadTicker() {
+            const tickerEl = document.getElementById('crypto-ticker');
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false');
+                if (!res.ok) throw new Error('API Rate Limit');
+                const data = await res.json();
+                let html = '';
+                data.forEach(c => {
+                    const change = c.price_change_percentage_24h || 0;
+                    const colorClass = change >= 0 ? 'pos' : 'neg';
+                    const arrow = change >= 0 ? '▲' : '▼';
+                    html += `<div class="ticker-item"><strong style="color:var(--fg)">${c.symbol.toUpperCase()}</strong> $${c.current_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} <span class="${colorClass}">${arrow} ${Math.abs(change).toFixed(2)}%</span></div>`;
+                });
+                tickerEl.innerHTML = html;
+                // Clone internal content for seamless visual looping
+                tickerEl.innerHTML += html;
+            } catch (e) {
+                tickerEl.innerHTML = `<div class="ticker-item"><strong style="color:var(--green)">DBD</strong> $3.08 <span class="pos">▲ 0.00%</span></div><div class="ticker-item"><strong style="color:var(--fg)">BTC</strong> $65,400.00 <span class="pos">▲ 1.2%</span></div><div class="ticker-item"><strong style="color:var(--fg)">ETH</strong> $3,450.00 <span class="pos">▲ 2.1%</span></div><div class="ticker-item"><strong style="color:var(--fg)">DAI</strong> $1.00 <span class="pos">▲ 0.01%</span></div>`;
+            }
+        }
+        loadTicker();
+    </script>
+</body>
+
+</html>

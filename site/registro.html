@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro B2B On-Chain | DoubleDyn</title>
+    <link rel="icon" type="image/png" href="assets/logo-icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .registry-hero { padding: 120px 24px 60px; text-align: center; }
+        .registry-title { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 16px; }
+        .registry-sub { color: var(--text-dim); max-width: 600px; margin: 0 auto 40px; }
+        
+        .b2b-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
+        .b2b-card {
+            background: linear-gradient(145deg, rgba(21, 32, 24, 0.8), rgba(15, 22, 17, 0.4));
+            backdrop-filter: blur(12px); border: 1px solid rgba(195, 255, 0, 0.08);
+            border-radius: 16px; padding: 24px; text-align: left;
+            transition: var(--transition);
+        }
+        .b2b-card:hover { border-color: rgba(195, 255, 0, 0.3); transform: translateY(-4px); }
+        .b2b-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+        .company-name { font-size: 1.2rem; font-weight: 600; color: var(--text); }
+        .company-sector { font-size: 0.85rem; color: var(--text-dim); }
+        .status-badge { background: rgba(46,204,113,0.1); color: var(--green); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(46,204,113,0.3); }
+        
+        .nft-image { width: 100%; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        
+        .b2b-data { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-dim); }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .data-val { color: var(--accent); font-weight: 600; }
+        
+        .hash-link { display: block; margin-top: 16px; font-size: 0.8rem; color: var(--accent); text-decoration: none; word-break: break-all; opacity: 0.7; }
+        .hash-link:hover { opacity: 1; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo-icon.png" alt="DoubleDyn Logo" class="logo-img">
+                <span class="logo-text">DoubleDyn</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Voltar ao site</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="registry-hero">
+            <h1 class="registry-title">Transparência <span class="text-accent">On-Chain</span></h1>
+            <p class="registry-sub">Registro público imutável das empresas B2B que confiam no Protocolo DoubleDyn para neutralização climática.</p>
+        </section>
+
+        <section class="b2b-grid">
+            <!-- SIMULATED CLIENT -->
+            <div class="b2b-card">
+                <div class="b2b-header">
+                    <div>
+                        <div class="company-name">Logística Alpha Express</div>
+                        <div class="company-sector">Transportes & Logística</div>
+                    </div>
+                    <div class="status-badge">Certificada</div>
+                </div>
+                
+                <img src="assets/nft-alpha.png" alt="DoubleDyn NFT" class="nft-image">
+                
+                <div class="b2b-data">
+                    <div class="data-row">
+                        <span>Volume Compensado:</span>
+                        <span class="data-val">198.5 tCO₂e</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Padrão Reportado:</span>
+                        <span class="data-val">GHG Protocol / SBCE</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Ano Base:</span>
+                        <span class="data-val">2024</span>
+                    </div>
+                    <a href="#" class="hash-link">Hash: 0x8f2d...9a1c (Polygon)</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

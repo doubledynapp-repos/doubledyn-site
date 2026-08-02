@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoubleDyn — Preview dos Smart Contracts</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #060a08;
+            --surface: #0d1610;
+            --border: #1a2f1f;
+            --accent: #C3FF00;
+            --accent-dim: rgba(195, 255, 0, 0.15);
+            --text: #e8efe8;
+            --text-dim: #7a8a7a;
+            --success: #00e676;
+            --danger: #ff5252;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            padding: 32px 48px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header .logo {
+            width: 42px; height: 42px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 18px; color: #0a1a0f;
+        }
+
+        .header h1 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 20px; font-weight: 600;
+        }
+
+        .header .badge {
+            margin-left: auto;
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 48px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .section-title span { color: var(--accent); }
+
+        .section-sub {
+            color: var(--text-dim);
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        /* ===== NFT PREVIEW ===== */
+        .nft-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 64px;
+        }
+
+        .nft-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nft-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(195, 255, 0, 0.08);
+        }
+
+        .nft-svg-wrapper {
+            padding: 24px;
+            background: #080e0a;
+        }
+
+        .nft-svg-wrapper svg {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+
+        .nft-info {
+            padding: 24px;
+        }
+
+        .nft-info h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .nft-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nft-tag {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ===== FLOW DIAGRAM ===== */
+        .flow-section {
+            margin-bottom: 64px;
+        }
+
+        .flow-steps {
+            display: flex;
+            gap: 0;
+            align-items: center;
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+
+        .flow-step {
+            flex-shrink: 0;
+            width: 200px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .flow-step:hover {
+            border-color: var(--accent);
+        }
+
+        .flow-step .step-num {
+            width: 32px; height: 32px;
+            background: var(--accent);
+            color: #0a1a0f;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px;
+            margin: 0 auto 12px;
+        }
+
+        .flow-step h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .flow-step p {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .flow-arrow {
+            flex-shrink: 0;
+            color: var(--accent);
+            font-size: 24px;
+            padding: 0 8px;
+            opacity: 0.6;
+        }
+
+        /* ===== CONTRACTS TABLE ===== */
+        .contracts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 64px;
+        }
+
+        .contract-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: border-color 0.3s;
+        }
+
+        .contract-card:hover {
+            border-color: var(--accent);
+        }
+
+        .contract-card .contract-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .contract-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .contract-card p {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .contract-card .features {
+            list-style: none;
+        }
+
+        .contract-card .features li {
+            font-size: 12px;
+            color: var(--text-dim);
+            padding: 4px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .contract-card .features li::before {
+            content: '✓ ';
+            color: var(--accent);
+        }
+
+        /* ===== TEST RESULTS ===== */
+        .tests {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 64px;
+        }
+
+        .tests h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .test-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .test-item:last-child { border-bottom: none; }
+
+        .test-pass {
+            color: var(--success);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .test-name {
+            color: var(--text-dim);
+        }
+
+        .test-suite {
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 16px 0 6px;
+        }
+
+        /* ===== INTERACTIVE ===== */
+        .demo-section {
+            margin-bottom: 64px;
+        }
+
+        .demo-form {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .demo-form .full { grid-column: 1 / -1; }
+
+        .demo-form label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .demo-form input, .demo-form select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .demo-form input:focus, .demo-form select:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-generate {
+            grid-column: 1 / -1;
+            padding: 14px 32px;
+            background: var(--accent);
+            color: #0a1a0f;
+            border: none;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+
+        .btn-generate:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        #previewResult {
+            grid-column: 1 / -1;
+            margin-top: 16px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 48px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        .footer span { color: var(--accent); }
+
+        @media (max-width: 900px) {
+            .nft-grid, .contracts-grid { grid-template-columns: 1fr; }
+            .demo-form { grid-template-columns: 1fr; }
+            .container { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">D</div>
+        <h1>DoubleDyn — Smart Contracts Preview</h1>
+        <div class="badge">Polygon · Solidity 0.8.27 · Cancun EVM</div>
+    </header>
+
+    <div class="container">
+
+        <!-- FLOW -->
+        <section class="flow-section">
+            <h2 class="section-title">Fluxo <span>On-Chain</span></h2>
+            <p class="section-sub">O caminho completo: do lead até o certificado NFT na blockchain.</p>
+
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="step-num">1</div>
+                    <h4>Calculadora</h4>
+                    <p>Empresa calcula pegada de carbono (Lei 15.042)</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">2</div>
+                    <h4>Lead</h4>
+                    <p>Dados enviados via WhatsApp + Email</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">3</div>
+                    <h4>Carteira</h4>
+                    <p>WalletFactory cria carteira custodial (1 por CNPJ)</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">4</div>
+                    <h4>Queima</h4>
+                    <p>CarbonRetire queima BCT → dead address</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">5</div>
+                    <h4>NFT</h4>
+                    <p>CertificateNFT minta o certificado na carteira</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-num">6</div>
+                    <h4>Entrega</h4>
+                    <p>Se quiser, empresa recebe o NFT na própria wallet</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTRACTS -->
+        <section>
+            <h2 class="section-title">Smart <span>Contracts</span></h2>
+            <p class="section-sub">Três contratos que fazem tudo funcionar.</p>
+
+            <div class="contracts-grid">
+                <div class="contract-card">
+                    <div class="contract-icon">🔥</div>
+                    <h3>CarbonRetire.sol</h3>
+                    <p>Queima créditos de carbono BCT (Toucan Protocol) e aciona o mint do certificado NFT automaticamente.</p>
+                    <ul class="features">
+                        <li>Queima BCT → dead address</li>
+                        <li>Hash único por queima</li>
+                        <li>Mint automático do NFT</li>
+                        <li>Sistema de operadores</li>
+                        <li>Registro completo (empresa, tCO₂e, timestamp)</li>
+                        <li>Emergency withdraw</li>
+                    </ul>
+                </div>
+                <div class="contract-card">
+                    <div class="contract-icon">🏆</div>
+                    <h3>CertificateNFT.sol</h3>
+                    <p>ERC-721 com SVG e metadados 100% on-chain. Zero dependência de IPFS.</p>
+                    <ul class="features">
+                        <li>SVG gerado on-chain</li>
+                        <li>Metadados em Base64 JSON</li>
+                        <li>Nome, CNPJ, tCO₂e, hash</li>
+                        <li>Lei 15.042 registrada</li>
+                        <li>Toucan Protocol (BCT)</li>
+                        <li>Enumerável (ERC721Enumerable)</li>
+                    </ul>
+                </div>
+                <div class="contract-card">
+                    <div class="contract-icon">👛</div>
+                    <h3>WalletFactory.sol</h3>
+                    <p>Cria carteiras custodiais exclusivas por empresa. DoubleDyn mantém as chaves.</p>
+                    <ul class="features">
+                        <li>1 carteira por CNPJ</li>
+                        <li>Proteção anti-duplicata</li>
+                        <li>Suporta ERC-721 + ERC-20</li>
+                        <li>Transferência sob demanda</li>
+                        <li>Rotação de operadores</li>
+                        <li>Recebe ETH/MATIC</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- NFT PREVIEW -->
+        <section class="demo-section">
+            <h2 class="section-title">Preview do <span>NFT Certificado</span></h2>
+            <p class="section-sub">Preencha os dados e veja exatamente como o certificado ficará na blockchain.</p>
+
+            <div class="demo-form">
+                <div>
+                    <label>Nome da Empresa</label>
+                    <input type="text" id="demoCompany" value="Bayer Brasil Ltda" />
+                </div>
+                <div>
+                    <label>CNPJ</label>
+                    <input type="text" id="demoCNPJ" value="18.459.628/0001-27" />
+                </div>
+                <div>
+                    <label>Toneladas CO₂e Compensadas</label>
+                    <input type="number" id="demoTons" value="127.5" step="0.1" min="0.1" />
+                </div>
+                <div>
+                    <label>Token ID</label>
+                    <input type="number" id="demoTokenId" value="0" min="0" />
+                </div>
+                <button class="btn-generate" onclick="generatePreview()">⚡ Gerar Preview do NFT</button>
+                <div id="previewResult" class="full"></div>
+            </div>
+        </section>
+
+        <!-- EXAMPLES -->
+        <section>
+            <h2 class="section-title">Exemplos de <span>Certificados</span></h2>
+            <p class="section-sub">Como ficaria para cada parceiro da DoubleDyn.</p>
+
+            <div class="nft-grid" id="nftExamples"></div>
+        </section>
+
+        <!-- TESTS -->
+        <section>
+            <h2 class="section-title">Testes <span>Unitários</span></h2>
+            <p class="section-sub">12/12 passando — cobertura completa do fluxo.</p>
+
+            <div class="tests">
+                <h3>✅ 12 passing (1s)</h3>
+
+                <div class="test-suite">WalletFactory</div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve criar carteira custodial para empresa</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve impedir duplicata por CNPJ</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve retornar carteira por CNPJ</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve bloquear não-operadores</span></div>
+
+                <div class="test-suite">CarbonRetire</div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve ter saldo de BCT disponível</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve queimar carbono e emitir NFT certificado</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve gerar tokenURI on-chain com SVG</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve registrar múltiplas queimas na mesma carteira</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve rejeitar queima sem BCT suficiente</span></div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve bloquear não-operadores</span></div>
+
+                <div class="test-suite">CustodialWallet — Transferência</div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve transferir NFT para carteira externa da empresa</span></div>
+
+                <div class="test-suite">Fluxo Completo E2E</div>
+                <div class="test-item"><span class="test-pass">✓</span> <span class="test-name">deve executar o fluxo completo: carteira → depósito → queima → NFT → transferência</span></div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <span>DoubleDyn</span> · Polygon · Lei 15.042/2024 (SBCE) · Toucan Protocol · Maio 2026
+    </footer>
+
+    <script>
+        // ===== SVG GENERATOR (idêntico ao on-chain) =====
+        function generateSVG(companyName, tonsStr, hashStr, tokenId) {
+            const shortHash = hashStr.substring(0, 20);
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+                <defs>
+                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#0a1a0f"/>
+                        <stop offset="100%" style="stop-color:#1a2f1f"/>
+                    </linearGradient>
+                </defs>
+                <rect width="600" height="400" fill="url(#bg)" rx="16"/>
+                <rect x="12" y="12" width="576" height="376" fill="none" stroke="#C3FF00" stroke-width="1" rx="12" opacity="0.4"/>
+                <!-- Header -->
+                <text x="300" y="50" text-anchor="middle" fill="#C3FF00" font-size="14" font-family="monospace" letter-spacing="4">DOUBLEDYN</text>
+                <text x="300" y="80" text-anchor="middle" fill="#ffffff" font-size="20" font-family="serif">CERTIFICADO DE COMPENSAÇÃO</text>
+                <text x="300" y="105" text-anchor="middle" fill="#ffffff" font-size="16" font-family="serif">DE CARBONO</text>
+                <!-- Line -->
+                <line x1="60" y1="120" x2="540" y2="120" stroke="#C3FF00" stroke-width="0.5" opacity="0.6"/>
+                <!-- Company -->
+                <text x="300" y="160" text-anchor="middle" fill="#C3FF00" font-size="24" font-family="sans-serif" font-weight="bold">${companyName}</text>
+                <!-- Tons -->
+                <text x="300" y="200" text-anchor="middle" fill="#ffffff" font-size="14" font-family="sans-serif" opacity="0.7">compensou com sucesso</text>
+                <text x="300" y="240" text-anchor="middle" fill="#C3FF00" font-size="36" font-family="monospace" font-weight="bold">${tonsStr}</text>
+                <text x="300" y="265" text-anchor="middle" fill="#ffffff" font-size="14" font-family="sans-serif" opacity="0.7">toneladas de CO₂ equivalente</text>
+                <!-- Line -->
+                <line x1="60" y1="285" x2="540" y2="285" stroke="#C3FF00" stroke-width="0.5" opacity="0.6"/>
+                <!-- Hash -->
+                <text x="300" y="315" text-anchor="middle" fill="#888888" font-size="10" font-family="monospace">TX: ${shortHash}...</text>
+                <!-- Footer -->
+                <text x="300" y="345" text-anchor="middle" fill="#888888" font-size="10" font-family="monospace">Polygon | Toucan Protocol (BCT) | Lei 15.042/2024</text>
+                <text x="300" y="370" text-anchor="middle" fill="#C3FF00" font-size="10" font-family="monospace">NFT #${tokenId}</text>
+            </svg>`;
+        }
+
+        function fakeHash() {
+            const chars = '0123456789abcdef';
+            let h = '0x';
+            for (let i = 0; i < 64; i++) h += chars[Math.floor(Math.random() * 16)];
+            return h;
+        }
+
+        function generatePreview() {
+            const company = document.getElementById('demoCompany').value;
+            const tons = document.getElementById('demoTons').value;
+            const tokenId = document.getElementById('demoTokenId').value;
+            const hash = fakeHash();
+
+            const svg = generateSVG(company, tons, hash, tokenId);
+
+            document.getElementById('previewResult').innerHTML = `
+                <div style="background:#080e0a; border-radius:16px; padding:24px; margin-top:8px;">
+                    ${svg}
+                    <div style="margin-top:20px; padding:20px; background:var(--bg); border-radius:12px; border:1px solid var(--border);">
+                        <h4 style="font-size:14px; margin-bottom:12px; color:var(--accent);">Metadados JSON (on-chain)</h4>
+                        <pre style="font-size:11px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; white-space:pre-wrap; line-height:1.6;">${JSON.stringify({
+                            name: `Certificado de Compensação de Carbono #${tokenId}`,
+                            description: "Certificado emitido pela DoubleDyn comprovando a queima de créditos de carbono na blockchain Polygon. Base legal: Lei 15.042/2024 (SBCE).",
+                            image: "data:image/svg+xml;base64,...",
+                            attributes: [
+                                { trait_type: "Empresa", value: company },
+                                { trait_type: "CNPJ", value: document.getElementById('demoCNPJ').value },
+                                { trait_type: "Emissões Compensadas", value: `${tons} tCO₂e` },
+                                { trait_type: "Hash da Queima", value: hash },
+                                { trait_type: "Blockchain", value: "Polygon" },
+                                { trait_type: "Protocolo", value: "Toucan Protocol (BCT)" },
+                                { trait_type: "Lei Base", value: "Lei 15.042/2024 (SBCE)" },
+                                { display_type: "date", trait_type: "Data da Queima", value: Math.floor(Date.now()/1000) }
+                            ]
+                        }, null, 2)}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== EXAMPLES ON LOAD =====
+        const examples = [
+            { company: "Bayer Brasil Ltda", cnpj: "18.459.628/0001-27", tons: "127.5", id: 0 },
+            { company: "Nexa Resources S.A.", cnpj: "42.416.651/0001-07", tons: "340", id: 1 },
+            { company: "LongPing High-Tech", cnpj: "07.548.873/0001-95", tons: "85.3", id: 2 },
+            { company: "Valore Ambiental", cnpj: "31.245.789/0001-42", tons: "52", id: 3 },
+        ];
+
+        const examplesContainer = document.getElementById('nftExamples');
+        examples.forEach(ex => {
+            const hash = fakeHash();
+            const svg = generateSVG(ex.company, ex.tons, hash, ex.id);
+            examplesContainer.innerHTML += `
+                <div class="nft-card">
+                    <div class="nft-svg-wrapper">${svg}</div>
+                    <div class="nft-info">
+                        <h3>Certificado #${ex.id} — ${ex.company}</h3>
+                        <div class="nft-meta">
+                            <span class="nft-tag">${ex.tons} tCO₂e</span>
+                            <span class="nft-tag">CNPJ: ${ex.cnpj}</span>
+                            <span class="nft-tag">Polygon</span>
+                            <span class="nft-tag">ERC-721</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Generate initial preview
+        generatePreview();
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://doubledyn-site.vercel.app/</loc><lastmod>2026-05-21</lastmod><priority>1.0</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/blog.html</loc><lastmod>2026-05-21</lastmod><priority>0.8</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/agendamento.html</loc><lastmod>2026-05-21</lastmod><priority>0.6</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/registro.html</loc><lastmod>2026-05-21</lastmod><priority>0.5</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/privacidade.html</loc><lastmod>2026-05-21</lastmod><priority>0.3</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/termos.html</loc><lastmod>2026-05-21</lastmod><priority>0.3</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/posts/o-que-e-sbce.html</loc><lastmod>2026-05-20</lastmod><priority>0.7</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/posts/como-calcular-emissoes.html</loc><lastmod>2026-05-20</lastmod><priority>0.7</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/posts/lei-15042-2024.html</loc><lastmod>2026-05-20</lastmod><priority>0.7</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/posts/esg-na-pratica.html</loc><lastmod>2026-05-20</lastmod><priority>0.7</priority></url>
+  <url><loc>https://doubledyn-site.vercel.app/posts/creditos-de-carbono.html</loc><lastmod>2026-05-20</lastmod><priority>0.7</priority></url>
+</urlset>

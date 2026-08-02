@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DoubleDyn — Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --bg2: #111a14;
+    --bg-card: #152018;
+    --accent: #c3ff00;
+    --accent-dim: #8ab800;
+    --accent-glow: rgba(195, 255, 0, 0.15);
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --orange: #e67e22;
+    --yellow: #f1c40f;
+    --text: #e8efe8;
+    --text-dim: #8fb898;
+    --border: rgba(195, 255, 0, 0.12);
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+
+  /* SLIDE CONTAINER */
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 100px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: translateX(40px);
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .slide.prev {
+    transform: translateX(-40px);
+  }
+
+  /* BACKGROUNDS */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: -150px; left: -150px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(46, 204, 113, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* TYPOGRAPHY */
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.15;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.5vw, 36px);
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    position: relative;
+    z-index: 1;
+  }
+
+  p, li {
+    font-family: var(--font-body);
+    font-size: clamp(16px, 1.8vw, 24px);
+    color: var(--text-dim);
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+
+  .accent { color: var(--accent); }
+  .accent-bold { color: var(--accent); font-weight: 700; }
+  .red { color: var(--red); }
+  .white { color: var(--text); }
+  .dim { color: var(--text-dim); }
+
+  /* SPECIAL ELEMENTS */
+  .subtitle {
+    font-family: var(--font-body);
+    font-size: clamp(18px, 2vw, 28px);
+    color: var(--text-dim);
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: clamp(14px, 1.4vw, 20px);
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .divider {
+    width: 80px;
+    height: 3px;
+    background: var(--accent);
+    margin: 24px auto;
+    border-radius: 2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.5vw, 52px);
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.3;
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote .accent { font-style: italic; }
+
+  /* GRID LAYOUTS */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(195, 255, 0, 0.3);
+  }
+
+  .card-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .card h3 {
+    font-size: clamp(16px, 1.6vw, 22px);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .card p {
+    font-size: clamp(13px, 1.2vw, 16px);
+    line-height: 1.5;
+  }
+
+  /* RISK ITEMS */
+  .risk-list {
+    list-style: none;
+    padding: 0;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .risk-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 28px;
+    background: rgba(231, 76, 60, 0.08);
+    border-left: 4px solid var(--red);
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 12px;
+    font-family: var(--font-body);
+    font-size: clamp(16px, 1.6vw, 22px);
+    color: var(--text);
+  }
+
+  .risk-icon { font-size: 24px; flex-shrink: 0; }
+
+  /* QUESTION LIST */
+  .question-list {
+    list-style: none;
+    padding: 0;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .question-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-family: var(--font-body);
+    font-size: clamp(16px, 1.6vw, 22px);
+    color: var(--text);
+  }
+
+  .question-item .q-icon {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* STAT */
+  .stat-row {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: var(--font-body);
+    font-size: clamp(14px, 1.4vw, 18px);
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  /* PILLAR CARD */
+  .pillar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .pillar-card .card-icon { font-size: 32px; margin-bottom: 10px; }
+
+  .pillar-card h3 {
+    font-size: clamp(14px, 1.3vw, 18px);
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .pillar-card p {
+    font-size: clamp(12px, 1vw, 14px);
+    line-height: 1.4;
+  }
+
+  /* LEARNINGS */
+  .learning-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 36px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .learning-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .learning-num {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .learning-text {
+    font-family: var(--font-body);
+    font-size: clamp(14px, 1.4vw, 18px);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-container {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cta-box {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 28px 36px;
+    text-align: center;
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+
+  .cta-box h3 {
+    font-size: clamp(16px, 1.6vw, 22px);
+    color: var(--accent);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .cta-box p {
+    font-size: clamp(14px, 1.4vw, 18px);
+    color: var(--text);
+  }
+
+  .cta-box .cta-link {
+    font-family: var(--font-mono);
+    font-size: clamp(14px, 1.3vw, 18px);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* LOGO */
+  .logo-container {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 32px;
+  }
+
+  .logo-container img {
+    max-width: 320px;
+    height: auto;
+  }
+
+  /* PROGRESS BAR */
+  .progress {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* SLIDE COUNTER */
+  .counter {
+    position: fixed;
+    bottom: 16px;
+    right: 24px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-dim);
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* NAV HINT */
+  .nav-hint {
+    position: fixed;
+    bottom: 16px;
+    left: 24px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    z-index: 100;
+    opacity: 0.4;
+  }
+
+  /* PRINT */
+  @media print {
+    .slide {
+      position: relative;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      page-break-after: always;
+      min-height: 100vh;
+    }
+    .progress, .counter, .nav-hint { display: none; }
+  }
+
+  /* LEFT-ALIGNED SLIDE */
+  .slide-left {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .slide-left h2, .slide-left h3, .slide-left p { text-align: left; }
+
+  /* CASE BADGE */
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(195, 255, 0, 0.1);
+    border: 1px solid var(--accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .content-block {
+    max-width: 1000px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .highlight-box {
+    background: rgba(195, 255, 0, 0.08);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 32px;
+    margin-top: 24px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide active" id="slide-0">
+    <div class="logo-container">
+      <img src="assets/logo-oficial-doubledyn.jpg" alt="DoubleDyn EcoToken" style="max-width: 400px; border-radius: 16px; box-shadow: 0 0 40px rgba(195, 255, 0, 0.2);" onerror="this.style.display='none'">
+    </div>
+    <div class="tagline">Infraestrutura de Confiança Ambiental</div>
+    <h1>Gestão de Risco para o<br><span class="accent">Mercado de Carbono</span></h1>
+    <div class="divider"></div>
+    <p style="font-size: clamp(16px, 1.5vw, 22px); color: var(--text-dim); margin-top: 8px;">Pitch Deck · 2026</p>
+  </div>
+
+  <!-- SLIDE 2: ABERTURA -->
+  <div class="slide" id="slide-1">
+    <h2>Quando falamos de mercado de carbono,<br>muitas pessoas pensam em <span class="dim">sustentabilidade.</span></h2>
+    <div class="divider"></div>
+    <h1 style="margin-top: 16px;">A DoubleDyn pensa em<br><span class="accent">gestão de risco.</span></h1>
+  </div>
+
+  <!-- SLIDE 3: SBCE -->
+  <div class="slide" id="slide-2">
+    <div class="tagline">Contexto Regulatório</div>
+    <h2>O mercado ambiental está passando por uma <span class="accent">transformação profunda</span></h2>
+    <div class="divider"></div>
+    <div class="grid-3" style="margin-top: 36px;">
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <h3>SBCE</h3>
+        <p>Sistema Brasileiro de Comércio de Emissões — novas exigências regulatórias</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <h3>Auditorias</h3>
+        <p>Pressões de investidores e consumidores por transparência</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📋</span>
+        <h3>Comprovação</h3>
+        <p>Empresas precisarão comprovar alegações ambientais de forma auditável</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: O PROBLEMA -->
+  <div class="slide" id="slide-3">
+    <div class="tagline">O Problema</div>
+    <h2>O problema não é a <span class="dim">falta de vontade</span> de compensar.</h2>
+    <div style="height: 20px;"></div>
+    <h2>É a falta de <span class="accent">inteligência</span>, <span class="accent">curadoria</span> e <span class="accent">garantia</span><br>de que o crédito comprado é real.</h2>
+  </div>
+
+  <!-- SLIDE 5: AS PERGUNTAS -->
+  <div class="slide" id="slide-4">
+    <div class="tagline">Perguntas Sem Resposta</div>
+    <h3 style="margin-bottom: 28px; text-align: center;">Uma empresa que precisa compensar suas emissões<br>precisa responder perguntas fundamentais:</h3>
+    <ul class="question-list">
+      <li class="question-item"><span class="q-icon">?</span> O projeto existe?</li>
+      <li class="question-item"><span class="q-icon">?</span> O carbono foi realmente compensado?</li>
+      <li class="question-item"><span class="q-icon">?</span> Os dados podem ser auditados?</li>
+      <li class="question-item"><span class="q-icon">?</span> O crédito atende às exigências regulatórias?</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 6: OS RISCOS -->
+  <div class="slide" id="slide-5">
+    <div class="tagline" style="color: var(--red);">Quando as respostas não existem</div>
+    <h2 style="margin-bottom: 32px;">Surgem riscos <span class="red">financeiros</span>, <span class="red">jurídicos</span><br>e <span class="red">reputacionais</span></h2>
+    <ul class="risk-list">
+      <li class="risk-item"><span class="risk-icon">💰</span> Multas milionárias</li>
+      <li class="risk-item"><span class="risk-icon">📉</span> Perda de contratos e investidores</li>
+      <li class="risk-item"><span class="risk-icon">🚫</span> Restrições operacionais</li>
+      <li class="risk-item"><span class="risk-icon">💔</span> Danos à reputação</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 7: CASO GOL -->
+  <div class="slide" id="slide-6">
+    <div class="badge">Caso Real</div>
+    <h2>Esse não é um <span class="red">risco teórico</span></h2>
+    <div class="divider" style="background: var(--red);"></div>
+    <div class="highlight-box" style="background: rgba(231, 76, 60, 0.08); border-color: rgba(231, 76, 60, 0.2); max-width: 800px;">
+      <p style="font-size: clamp(18px, 2vw, 26px); color: var(--text); line-height: 1.6;">
+        Recentemente, grandes empresas enfrentaram <strong style="color: var(--red);">condenações milionárias</strong> relacionadas a alegações ambientais sem comprovação adequada.
+      </p>
+      <p style="margin-top: 16px; font-size: clamp(14px, 1.4vw, 20px);">
+        O resultado: <span class="red">condenação milionária</span> e <span class="red">danos reputacionais significativos</span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: NOVA ERA -->
+  <div class="slide" id="slide-7">
+    <h2 style="font-size: clamp(24px, 2.5vw, 36px); color: var(--text-dim);">O mercado está entrando em uma nova era.</h2>
+    <div style="height: 32px;"></div>
+    <p class="quote">Não basta dizer que é sustentável.<br><span class="accent" style="font-size: 1.15em;">É preciso provar.</span></p>
+  </div>
+
+  <!-- SLIDE 9: A DOUBLEDYN -->
+  <div class="slide" id="slide-8">
+    <div class="tagline">A Solução</div>
+    <h1>DoubleDyn</h1>
+    <div class="divider"></div>
+    <h2 style="margin-top: 16px; font-size: clamp(22px, 2.5vw, 36px);">Uma camada de <span class="accent">inteligência</span> e <span class="accent">validação</span></h2>
+    <p style="max-width: 800px; text-align: center; margin-top: 24px; font-size: clamp(16px, 1.6vw, 22px);">
+      Nossa tecnologia ajuda empresas, investidores e gestores públicos a identificar <strong class="white">ativos ambientais confiáveis</strong>, reduzindo riscos regulatórios, financeiros e reputacionais.
+    </p>
+  </div>
+
+  <!-- SLIDE 10: FRAMEWORK -->
+  <div class="slide" id="slide-9">
+    <div class="tagline">Framework Proprietário</div>
+    <h2>Separar projetos <span class="accent">confiáveis</span><br>de projetos <span class="dim">duvidosos</span></h2>
+    <div class="divider"></div>
+    <p style="max-width: 700px; text-align: center; margin-top: 16px; font-size: clamp(16px, 1.5vw, 22px);">
+      Avaliamos ativos ambientais utilizando critérios científicos e tecnológicos.<br>
+      O objetivo é transformar ativos ambientais em ativos <span class="accent-bold">verificáveis</span>, <span class="accent-bold">auditáveis</span> e <span class="accent-bold">confiáveis</span>.
+    </p>
+  </div>
+
+  <!-- SLIDE 11: 5 PILARES -->
+  <div class="slide" id="slide-10">
+    <div class="tagline">Metodologia</div>
+    <h2>Cinco Pilares</h2>
+    <div class="grid-5">
+      <div class="pillar-card">
+        <span class="card-icon">🔬</span>
+        <h3>Ciência</h3>
+        <p>Rigor técnico e metodológico</p>
+      </div>
+      <div class="pillar-card">
+        <span class="card-icon">🧠</span>
+        <h3>Inteligência Ambiental</h3>
+        <p>Dados transformados em decisões</p>
+      </div>
+      <div class="pillar-card">
+        <span class="card-icon">🔗</span>
+        <h3>Rastreabilidade</h3>
+        <p>Transparência e auditoria</p>
+      </div>
+      <div class="pillar-card">
+        <span class="card-icon">📜</span>
+        <h3>Compliance</h3>
+        <p>Preparação regulatória</p>
+      </div>
+      <div class="pillar-card">
+        <span class="card-icon">⛓️</span>
+        <h3>Web3</h3>
+        <p>Segurança e integridade</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: CASE INGAÍ -->
+  <div class="slide" id="slide-11">
+    <div class="badge">✅ Validação em Campo</div>
+    <h2>Festa da Fogueira de Ingaí</h2>
+    <p style="margin-top: 8px; font-size: clamp(16px, 1.5vw, 22px); text-align: center;">
+      Minas Gerais · Realizada desde <span class="accent-bold">1931</span> · Patrimônio cultural da região
+    </p>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-value">100</div>
+        <div class="stat-label">tCO₂e emitidas<br>(inventário)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" style="color: var(--green);">120</div>
+        <div class="stat-label">tCO₂e compensadas<br>(certificadas)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">+20%</div>
+        <div class="stat-label">saldo ambiental<br>positivo</div>
+      </div>
+    </div>
+    <div class="highlight-box" style="max-width: 800px;">
+      <p style="font-size: clamp(14px, 1.3vw, 18px);">
+        Validamos todo o processo de <span class="accent-bold">inventário</span>, <span class="accent-bold">rastreabilidade</span>, <span class="accent-bold">curadoria</span> e <span class="accent-bold">governança ambiental</span> em um cenário real.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: 4 APRENDIZADOS -->
+  <div class="slide" id="slide-12">
+    <div class="tagline">Resultados do Piloto</div>
+    <h2>O piloto demonstrou <span class="accent">quatro pontos</span> fundamentais</h2>
+    <div class="learning-grid">
+      <div class="learning-card">
+        <span class="learning-num">01</span>
+        <span class="learning-text">Existe <strong class="white">demanda real</strong> por soluções de conformidade ambiental</span>
+      </div>
+      <div class="learning-card">
+        <span class="learning-num">02</span>
+        <span class="learning-text">Nossa <strong class="white">metodologia funciona</strong> na prática</span>
+      </div>
+      <div class="learning-card">
+        <span class="learning-num">03</span>
+        <span class="learning-text">O modelo é <strong class="white">escalável</strong> para empresas, eventos, municípios e projetos</span>
+      </div>
+      <div class="learning-card">
+        <span class="learning-num">04</span>
+        <span class="learning-text">A gestão ambiental pode ser um <strong class="white">ativo estratégico</strong>, não apenas um custo</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: FRASE FINAL -->
+  <div class="slide" id="slide-13">
+    <p class="quote" style="font-size: clamp(22px, 2.5vw, 34px); color: var(--text-dim); margin-bottom: 32px;">
+      Os vencedores do mercado ambiental não serão<br>aqueles que gerarem mais créditos de carbono.
+    </p>
+    <p class="quote" style="margin-bottom: 40px;">
+      Serão aqueles que gerarem<br>mais <span class="accent">confiança</span>.
+    </p>
+    <div class="divider"></div>
+    <p class="quote" style="font-size: clamp(18px, 2vw, 28px); margin-top: 24px; color: var(--text-dim);">
+      O mercado não sofre pela falta de créditos.<br>
+      Sofre pela falta de <span class="accent">confiança</span> nos créditos que compra.
+    </p>
+  </div>
+
+  <!-- SLIDE 15: NOSSO TIME -->
+  <div class="slide" id="slide-14">
+    <div class="tagline">Participantes</div>
+    <div class="divider"></div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; max-width: 900px; width: 100%; margin-top: 36px; position: relative; z-index: 1;">
+      <div style="text-align: center;">
+        <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);">
+          <img src="assets/images/diego-augusto.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <p style="font-family: var(--font-body); font-size: 18px; color: var(--text); font-weight: 600;">Diego Augusto</p>
+      </div>
+      <div style="text-align: center;">
+        <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);">
+          <img src="assets/images/rony-costa.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <p style="font-family: var(--font-body); font-size: 18px; color: var(--text); font-weight: 600;">Rony Costa</p>
+      </div>
+      <div style="text-align: center;">
+        <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);">
+          <img src="assets/images/pedro-augusto.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <p style="font-family: var(--font-body); font-size: 18px; color: var(--text); font-weight: 600;">Pedro Augusto</p>
+      </div>
+      <div style="text-align: center;">
+        <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);">
+          <img src="assets/images/raphaela-oliveira.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <p style="font-family: var(--font-body); font-size: 18px; color: var(--text); font-weight: 600;">Raphaela Oliveira</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: CTA -->
+  <div class="slide" id="slide-15">
+    <div class="logo-container">
+      <img src="assets/logo-full.png" alt="DoubleDyn" style="max-width: 280px;" onerror="this.style.display='none'">
+    </div>
+    <h2>Vamos construir <span class="accent">confiança</span> juntos?</h2>
+    <div class="divider"></div>
+    <div class="cta-container">
+      <div class="cta-box">
+        <h3>📱 WhatsApp</h3>
+        <p class="cta-link">+55 11 92452-6590</p>
+      </div>
+      <div class="cta-box">
+        <h3>🌐 Site</h3>
+        <p class="cta-link">doubledyn.com</p>
+      </div>
+      <div class="cta-box">
+        <h3>📧 Email</h3>
+        <p class="cta-link">DoubleDynaapp@gmail.com</p>
+      </div>
+    </div>
+    <div style="margin-top: 36px; position: relative; z-index: 1;">
+      <p style="font-family: var(--font-mono); font-size: 14px; color: var(--text-dim); text-align: center;">
+        📸 @doubledynapp
+      </p>
+    </div>
+    <p style="margin-top: 40px; font-family: var(--font-display); font-size: clamp(16px, 1.5vw, 22px); color: var(--text-dim); font-style: italic; text-align: center; position: relative; z-index: 1;">
+      Muito obrigado.
+    </p>
+  </div>
+
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="nav-hint">← → ou clique para navegar</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+    current = n;
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i < current) s.classList.add('prev');
+    });
+    slides[current].classList.add('active');
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // Click navigation
+  document.addEventListener('click', (e) => {
+    const x = e.clientX / window.innerWidth;
+    if (x > 0.5) next();
+    else prev();
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
+  });
+
+  // Init
+  goTo(0);
+</script>
+
+</body>
+</html>

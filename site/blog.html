@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog DoubleDyn — Educação, Regulação e Sustentabilidade</title>
+    <meta name="description" content="Artigos sobre SBCE, ESG, créditos de carbono e regulação ambiental para empresas brasileiras. Blog da DoubleDyn Ecotoken.">
+    <meta property="og:title" content="Blog DoubleDyn — Educação e Regulação Ambiental">
+    <meta property="og:description" content="Artigos sobre SBCE, ESG, créditos de carbono e regulação ambiental para empresas brasileiras.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/logo-icon.png">
+    <link rel="canonical" href="https://doubledyn-site.vercel.app/blog.html">
+    <meta property="og:url" content="https://doubledyn-site.vercel.app/blog.html">
+    <meta property="og:site_name" content="DoubleDyn Ecotoken">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:image" content="https://doubledyn-site.vercel.app/assets/logo-full.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog DoubleDyn — Educação e Regulação Ambiental">
+    <meta name="twitter:description" content="Artigos sobre SBCE, ESG, créditos de carbono e regulação ambiental para empresas brasileiras.">
+    <meta name="twitter:image" content="https://doubledyn-site.vercel.app/assets/logo-full.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="blog-style.css">
+</head>
+<body>
+    <!-- NAV -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo-icon.png" alt="DoubleDyn" class="logo-img">
+                <span class="logo-text">DoubleDyn</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#calculadora">Calculadora</a></li>
+                <li><a href="index.html#como-funciona">Como Funciona</a></li>
+                <li><a href="index.html#parceiros">Parceiros</a></li>
+                <li><a href="blog.html" style="color: var(--accent);">Blog</a></li>
+                <li><a href="index.html#contato" class="nav-cta">Fale Conosco</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- BLOG HERO -->
+    <section class="blog-hero">
+        <div class="section-label">Blog</div>
+        <h1 class="blog-hero-title">Educação, regulação e <span class="text-accent">sustentabilidade</span></h1>
+        <p class="blog-hero-sub">Tudo que sua empresa precisa saber sobre o mercado de carbono brasileiro, ESG e a nova regulação ambiental.</p>
+    </section>
+
+    <!-- FILTERS -->
+    <div class="blog-filters">
+        <button class="blog-filter-btn active" data-filter="todos">Todos</button>
+        <button class="blog-filter-btn" data-filter="sbce">SBCE</button>
+        <button class="blog-filter-btn" data-filter="carbono">Carbono</button>
+        <button class="blog-filter-btn" data-filter="esg">ESG</button>
+        <button class="blog-filter-btn" data-filter="lei">Lei</button>
+        <button class="blog-filter-btn" data-filter="educacao">Educação</button>
+        <button class="blog-filter-btn" data-filter="tutorial">Tutorial</button>
+    </div>
+
+    <!-- BLOG GRID -->
+    <div class="blog-grid">
+
+        <!-- Card 1 -->
+        <a href="posts/o-que-e-sbce.html" class="blog-card" data-tags="sbce,regulacao">
+            <div class="blog-card-tags">
+                <span class="blog-card-tag">SBCE</span>
+                <span class="blog-card-tag">Regulação</span>
+            </div>
+            <h2 class="blog-card-title">O que é o SBCE e por que sua empresa precisa se preparar AGORA</h2>
+            <p class="blog-card-excerpt">O Sistema Brasileiro de Comércio de Emissões vai mudar as regras do jogo para empresas. Entenda o que muda e como se preparar.</p>
+            <div class="blog-card-meta">
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    20 Mai 2026
+                </span>
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    5 min de leitura
+                </span>
+            </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="posts/como-calcular-emissoes.html" class="blog-card" data-tags="carbono,tutorial">
+            <div class="blog-card-tags">
+                <span class="blog-card-tag">Carbono</span>
+                <span class="blog-card-tag">Tutorial</span>
+            </div>
+            <h2 class="blog-card-title">Como calcular as emissões de carbono da sua empresa em 5 passos</h2>
+            <p class="blog-card-excerpt">Aprenda a medir o impacto ambiental da sua operação seguindo o padrão GHG Protocol, com exemplos práticos por setor.</p>
+            <div class="blog-card-meta">
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    20 Mai 2026
+                </span>
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    6 min de leitura
+                </span>
+            </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="posts/lei-15042-2024.html" class="blog-card" data-tags="lei,sbce">
+            <div class="blog-card-tags">
+                <span class="blog-card-tag">Lei</span>
+                <span class="blog-card-tag">SBCE</span>
+            </div>
+            <h2 class="blog-card-title">Lei 15.042/2024: tudo que muda para empresas brasileiras</h2>
+            <p class="blog-card-excerpt">A nova lei do mercado de carbono regulado no Brasil. Obrigações, prazos, setores mais impactados e penalidades.</p>
+            <div class="blog-card-meta">
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    20 Mai 2026
+                </span>
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    7 min de leitura
+                </span>
+            </div>
+        </a>
+
+        <!-- Card 4 -->
+        <a href="posts/esg-na-pratica.html" class="blog-card" data-tags="esg,sustentabilidade">
+            <div class="blog-card-tags">
+                <span class="blog-card-tag">ESG</span>
+                <span class="blog-card-tag">Sustentabilidade</span>
+            </div>
+            <h2 class="blog-card-title">ESG na prática: como começar a compensar suas emissões hoje</h2>
+            <p class="blog-card-excerpt">Guia prático para implementar ESG e compensar emissões com créditos de carbono. ROI da sustentabilidade.</p>
+            <div class="blog-card-meta">
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    20 Mai 2026
+                </span>
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    5 min de leitura
+                </span>
+            </div>
+        </a>
+
+        <!-- Card 5 -->
+        <a href="posts/creditos-de-carbono.html" class="blog-card" data-tags="carbono,educacao">
+            <div class="blog-card-tags">
+                <span class="blog-card-tag">Carbono</span>
+                <span class="blog-card-tag">Educação</span>
+            </div>
+            <h2 class="blog-card-title">O que são créditos de carbono e como funcionam no Brasil</h2>
+            <p class="blog-card-excerpt">Entenda o mercado de créditos de carbono e como a blockchain está transformando a certificação ambiental no Brasil.</p>
+            <div class="blog-card-meta">
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    20 Mai 2026
+                </span>
+                <span class="blog-card-meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    6 min de leitura
+                </span>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="blog-cta">
+        <h2 class="blog-cta-title">Descubra o impacto ambiental da <span class="text-accent">sua empresa</span></h2>
+        <p class="blog-cta-desc">Use nossa calculadora gratuita e receba um diagnóstico completo em 2 minutos. Sem compromisso.</p>
+        <a href="index.html#calculadora" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Calcular Meu Impacto Agora
+        </a>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo-row">
+                        <img src="assets/logo-icon.png" alt="DoubleDyn" class="logo-img">
+                        <span class="logo-text">DoubleDyn</span>
+                    </div>
+                    <p>Transformando cultura local em impacto ambiental real.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html#problema">O Problema</a>
+                    <a href="index.html#calculadora">Calculadora</a>
+                    <a href="index.html#como-funciona">Como Funciona</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="index.html#contato">Contato</a>
+                    <a href="privacidade.html">Privacidade</a>
+                    <a href="termos.html">Termos</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DoubleDyn Ecotoken. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WHATSAPP FLOAT -->
+    <a href="https://wa.me/5511924526590?text=Olá!%20Vim%20pelo%20blog%20da%20DoubleDyn." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+
+    <script>
+        // Navbar scroll
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Mobile toggle
+        document.getElementById('navToggle').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('open');
+            document.getElementById('navToggle').classList.toggle('active');
+        });
+
+        // Blog filter
+        document.querySelectorAll('.blog-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.blog-card').forEach(card => {
+                    if (filter === 'todos') {
+                        card.classList.remove('hidden');
+                    } else {
+                        const tags = card.dataset.tags.split(',');
+                        card.classList.toggle('hidden', !tags.includes(filter));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

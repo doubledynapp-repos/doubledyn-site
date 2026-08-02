@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento & Pagamento | DoubleDyn Ecotoken</title>
+    <meta name="description" content="Garanta sua consultoria e inicie o processo de certificação ambiental da sua empresa com a DoubleDyn.">
+    <link rel="icon" type="image/png" href="assets/logo-icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: var(--bg-primary); display: flex; flex-direction: column; min-height: 100vh; }
+        .checkout-hero {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 140px 24px 80px; position: relative;
+        }
+        .checkout-bg {
+            position: absolute; inset: 0; z-index: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(195,255,0,0.05) 0%, transparent 60%);
+        }
+        .checkout-card {
+            background: linear-gradient(145deg, rgba(21, 32, 24, 0.9), rgba(15, 22, 17, 0.8));
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(195, 255, 0, 0.15);
+            border-radius: var(--radius-lg); padding: 48px;
+            max-width: 600px; width: 100%; position: relative; z-index: 1;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(195, 255, 0, 0.05) inset;
+            text-align: center;
+        }
+        .checkout-header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .checkout-title { font-family: var(--font-display); font-size: 2rem; margin-bottom: 12px; color: var(--text); }
+        .checkout-subtitle { color: var(--text-dim); font-size: 1rem; }
+        .company-name { color: var(--accent); font-weight: 600; }
+        
+        .pix-section { margin-bottom: 32px; }
+        .pix-box {
+            background: rgba(10, 15, 13, 0.6); border: 1px dashed rgba(195, 255, 0, 0.3);
+            border-radius: 12px; padding: 24px; margin-bottom: 24px;
+        }
+        .pix-value {
+            font-family: var(--font-mono); font-size: 2.5rem; font-weight: 700;
+            color: var(--accent); margin-bottom: 8px;
+        }
+        .pix-desc { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; }
+        .pix-key-container {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0, 0, 0, 0.4); padding: 12px 16px;
+            border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 16px;
+        }
+        .pix-key { font-family: var(--font-mono); font-size: 0.9rem; color: #fff; word-break: break-all; text-align: left; }
+        .btn-copy {
+            background: var(--accent-glow); color: var(--accent); border: none;
+            padding: 8px 12px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 0.8rem; transition: var(--transition);
+            white-space: nowrap; margin-left: 12px;
+        }
+        .btn-copy:hover { background: var(--accent); color: var(--bg-primary); }
+        
+        .pix-qr { width: 150px; height: 150px; background: #fff; border-radius: 8px; margin: 0 auto; padding: 8px; }
+        .pix-qr img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .steps-list { text-align: left; margin-bottom: 32px; display: inline-block; }
+        .step-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: var(--text-dim); font-size: 0.95rem; }
+        .step-icon { width: 24px; height: 24px; border-radius: 50%; background: var(--accent-glow); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+        
+        .whatsapp-cta { width: 100%; justify-content: center; font-size: 1.1rem; padding: 18px; }
+        
+        @media (max-width: 768px) {
+            .checkout-card { padding: 32px 20px; border-radius: 20px; border: none; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo-icon.png" alt="DoubleDyn Logo" class="logo-img">
+                <span class="logo-text">DoubleDyn</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Voltar ao site</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="checkout-hero">
+        <div class="checkout-bg"></div>
+        <div class="checkout-card">
+            <div class="checkout-header">
+                <h1 class="checkout-title">Pré-Relatório Finalizado</h1>
+                <p class="checkout-subtitle">Excelente decisão, <span class="company-name" id="displayEmpresa">Empresa</span>. Suas emissões baseadas no GHG Protocol foram mapeadas.</p>
+            </div>
+
+            <div class="pix-section" style="text-align: left; margin-bottom: 32px;">
+                <p style="color: var(--text); margin-bottom: 24px; font-size: 1.05rem; line-height: 1.6;">O próximo passo é estruturarmos a sua <strong>Jornada de Neutralização</strong>. Diferente de consultorias tradicionais que entregam apenas um PDF caro e demorado, a DoubleDyn oferece um pacote tecnológico ponta-a-ponta.</p>
+                
+                <div class="steps-list" style="margin-bottom: 0;">
+                    <div class="step-item">
+                        <div class="step-icon" style="background: rgba(195,255,0,0.15);">✅</div>
+                        <span><strong>Mapeamento Exato:</strong> Descubra onde cortar custos ocultos (Escopo 1, 2 e 3).</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon" style="background: rgba(195,255,0,0.15);">✅</div>
+                        <span><strong>Neutralização On-Chain:</strong> Créditos premium alocados na blockchain ao seu CNPJ.</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon" style="background: rgba(195,255,0,0.15);">✅</div>
+                        <span><strong>Certificação Automática:</strong> Selo ESG pronto para divulgar no seu marketing B2B.</span>
+                    </div>
+                </div>
+            </div>
+
+            <p style="color: var(--text-dim); margin-bottom: 24px; font-size: 0.95rem;">Clique no botão abaixo para encaminhar seu Pré-Relatório ao nosso time no WhatsApp e agendar sua <strong>Call de Diagnóstico Estratégico (15 min)</strong>.</p>
+
+            <a href="#" class="btn btn-primary whatsapp-cta" id="btnFinalWhatsApp" target="_blank">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                Agendar Reunião com Especialista
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // Recuperar dados da calculadora salvos no LocalStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const empresa = localStorage.getItem('ddyn_empresa') || 'sua empresa';
+            const message = localStorage.getItem('ddyn_wa_msg') || 'Olá! Gostaria de agendar uma reunião de diagnóstico ESG.';
+            
+            document.getElementById('displayEmpresa').textContent = empresa;
+
+            // Configurar link do WhatsApp
+            const fone = '5511924526590'; // Número oficial DoubleDyn
+            const msgEncoded = encodeURIComponent(message);
+            document.getElementById('btnFinalWhatsApp').href = `https://wa.me/${fone}?text=${msgEncoded}`;
+        });
+    </script>
+</body>
+</html>

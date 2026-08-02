@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+.next/
+out/
+
+# Environment — SEGREDOS NUNCA entram no git
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Build / runtime
+build/
+dist/
+*.log
+.DS_Store
+
+# Vercel / deploy
+.vercel/

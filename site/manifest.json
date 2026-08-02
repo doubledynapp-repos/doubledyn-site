@@ -1,0 +1,21 @@
+{
+  "name": "DoubleDyn Ecotoken",
+  "short_name": "DoubleDyn",
+  "description": "Calculadora gratuita de impacto ambiental corporativo. Consultoria ESG + ativos ambientais rastreáveis.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2ecc71",
+  "background_color": "#0a0f0d",
+  "icons": [
+    {
+      "src": "assets/logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo-full.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

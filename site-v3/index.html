@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoubleDyn — Certificação de Carbono na Blockchain</title>
+    <meta name="description" content="Transformamos carbono em impacto real. Certificação blockchain com NFT, prova imutável de compensação. Baseado na Lei 15.042/2024 (SBCE).">
+    <meta name="keywords" content="carbono, crédito de carbono, blockchain, NFT, ESG, SBCE, Lei 15.042, certificação, sustentabilidade, ReFi">
+    <meta name="author" content="DoubleDyn">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="DoubleDyn — Certificação de Carbono na Blockchain">
+    <meta property="og:description" content="Transformamos carbono em impacto real. Certificação blockchain com NFT, prova imutável de compensação.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://doubledyn.com">
+    <meta property="og:image" content="https://doubledyn-site.vercel.app/og-image.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ========== THREE.JS CANVAS ========== -->
+    <canvas id="scene"></canvas>
+
+    <!-- ========== AMBIENT GLOW OVERLAYS ========== -->
+    <div class="ambient-glow ambient-glow--top-left"></div>
+    <div class="ambient-glow ambient-glow--bottom-right"></div>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav id="navbar" class="navbar">
+        <div class="navbar__container">
+            <a href="#hero" class="navbar__logo">
+                <span class="navbar__logo-icon">🦋</span>
+                <span class="navbar__logo-text">DoubleDyn</span>
+            </a>
+            <div class="navbar__links" id="navLinks">
+                <a href="#problema" class="navbar__link">Problema</a>
+                <a href="#solucao" class="navbar__link">Solução</a>
+                <a href="#parceiros" class="navbar__link">Parceiros</a>
+                <a href="#impacto" class="navbar__link">Impacto</a>
+                <a href="#blockchain" class="navbar__link">Blockchain</a>
+            </div>
+            <a href="#cta" class="navbar__cta">Comece Agora</a>
+            <button class="navbar__hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== MOBILE MENU ========== -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#problema" class="mobile-menu__link">Problema</a>
+        <a href="#solucao" class="mobile-menu__link">Solução</a>
+        <a href="#parceiros" class="mobile-menu__link">Parceiros</a>
+        <a href="#impacto" class="mobile-menu__link">Impacto</a>
+        <a href="#blockchain" class="mobile-menu__link">Blockchain</a>
+        <a href="#cta" class="mobile-menu__link mobile-menu__cta">Comece Agora</a>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main>
+
+        <!-- HERO -->
+        <section id="hero" class="section section--hero">
+            <div class="hero__content">
+                <div class="hero__badge">
+                    <span class="hero__badge-dot"></span>
+                    Lei 15.042/2024 · SBCE
+                </div>
+                <h1 class="hero__title">
+                    Transformamos <span class="text-gradient">carbono</span><br>
+                    em impacto <span class="text-gradient-gold">real</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Certificação blockchain com NFT. Prova imutável de compensação de carbono.<br>
+                    Para empresas que levam ESG a sério.
+                </p>
+                <div class="hero__actions">
+                    <a href="#cta" class="btn btn--primary" id="heroCta">
+                        <span>Calcule suas emissões</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#solucao" class="btn btn--ghost">
+                        <span>Como funciona</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hero__scroll-indicator" id="scrollIndicator">
+                <div class="hero__scroll-line"></div>
+                <span>Scroll</span>
+            </div>
+        </section>
+
+        <!-- PROBLEMA -->
+        <section id="problema" class="section section--problema">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__tag">O Problema</span>
+                    <h2 class="section__title">Sua empresa sabe quanto <span class="text-gradient">CO₂</span> emite por ano?</h2>
+                    <p class="section__description">O mercado de carbono brasileiro não é mais voluntário. É <strong>lei</strong>. E quem não se adaptar vai pagar caro.</p>
+                </div>
+                <div class="problem-cards">
+                    <div class="problem-card" data-animate="fade-up">
+                        <div class="problem-card__icon">⚖️</div>
+                        <h3 class="problem-card__title">Lei 15.042/2024</h3>
+                        <p class="problem-card__text">O SBCE (Sistema Brasileiro de Comércio de Emissões) torna o mercado de carbono <strong>obrigatório</strong> para empresas poluidoras.</p>
+                    </div>
+                    <div class="problem-card" data-animate="fade-up" data-delay="0.1">
+                        <div class="problem-card__icon">💸</div>
+                        <h3 class="problem-card__title">Multas Pesadas</h3>
+                        <p class="problem-card__text">Empresas que não compensarem suas emissões enfrentarão <strong>multas milionárias</strong> e restrições de mercado.</p>
+                    </div>
+                    <div class="problem-card" data-animate="fade-up" data-delay="0.2">
+                        <div class="problem-card__icon">🌍</div>
+                        <h3 class="problem-card__title">CBAM Europeu</h3>
+                        <p class="problem-card__text">Exportadores brasileiros já enfrentam <strong>barreiras de carbono</strong> da União Europeia. Sem certificação, sem exportação.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOLUÇÃO -->
+        <section id="solucao" class="section section--solucao">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__tag">A Solução</span>
+                    <h2 class="section__title">Da emissão ao <span class="text-gradient-gold">certificado NFT</span><br>em 7 passos</h2>
+                    <p class="section__description">Um fluxo completo: da calculadora gratuita até a prova imutável na blockchain.</p>
+                </div>
+                <div class="steps-timeline">
+                    <div class="steps-line"></div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">01</div>
+                        <div class="step__card">
+                            <div class="step__icon">🧮</div>
+                            <h3 class="step__title">Calculadora</h3>
+                            <p class="step__text">Empresa preenche 6 steps, 44 campos baseados no GHG Protocol. Resultado: emissões em tCO₂e/ano + custo estimado.</p>
+                            <span class="step__tag">Self-service · Gratuito</span>
+                        </div>
+                    </div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">02</div>
+                        <div class="step__card">
+                            <div class="step__icon">📲</div>
+                            <h3 class="step__title">Lead Automático</h3>
+                            <p class="step__text">Dados completos da empresa chegam automaticamente via WhatsApp + Email. Zero burocracia.</p>
+                            <span class="step__tag">WhatsApp + Email</span>
+                        </div>
+                    </div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">03</div>
+                        <div class="step__card">
+                            <div class="step__icon">🤝</div>
+                            <h3 class="step__title">Consultoria</h3>
+                            <p class="step__text">DoubleDyn busca a certificação para a empresa. Plano de redução + compensação personalizado.</p>
+                            <span class="step__tag">Humano · Personalizado</span>
+                        </div>
+                    </div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">04</div>
+                        <div class="step__card">
+                            <div class="step__icon">🔥</div>
+                            <h3 class="step__title">Queima On-Chain</h3>
+                            <p class="step__text">Créditos de carbono são queimados (retire) na blockchain Polygon. Hash da transação = prova imutável.</p>
+                            <span class="step__tag">Polygon · Toucan Protocol</span>
+                        </div>
+                    </div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">05</div>
+                        <div class="step__card">
+                            <div class="step__icon">🏆</div>
+                            <h3 class="step__title">Certificado NFT</h3>
+                            <p class="step__text">Hash da queima vira um NFT (ERC-721). Certificado oficial com empresa, tCO₂e, data e hash.</p>
+                            <span class="step__tag">ERC-721 · Verificável</span>
+                        </div>
+                    </div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">06</div>
+                        <div class="step__card">
+                            <div class="step__icon">🔐</div>
+                            <h3 class="step__title">Carteira Custodial</h3>
+                            <p class="step__text">DoubleDyn cria uma carteira exclusiva para cada empresa. NFT fica guardado com segurança total.</p>
+                            <span class="step__tag">Custódia · 1 por empresa</span>
+                        </div>
+                    </div>
+                    <div class="step" data-animate="step">
+                        <div class="step__number">07</div>
+                        <div class="step__card">
+                            <div class="step__icon">📦</div>
+                            <h3 class="step__title">Entrega Opcional</h3>
+                            <p class="step__text">Se a empresa quiser, DoubleDyn transfere o NFT para a carteira própria. Se não, fica seguro na custódia.</p>
+                            <span class="step__tag">Sob demanda</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARCEIROS -->
+        <section id="parceiros" class="section section--parceiros">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__tag">Parceiros</span>
+                    <h2 class="section__title">Empresas que já <span class="text-gradient">confiam</span> na DoubleDyn</h2>
+                </div>
+                <div class="partners-grid">
+                    <div class="partner-card" data-animate="fade-up">
+                        <div class="partner-card__logo">Bayer</div>
+                        <span class="partner-card__sector">Agro · Ciências da Vida</span>
+                    </div>
+                    <div class="partner-card" data-animate="fade-up" data-delay="0.1">
+                        <div class="partner-card__logo">Nexa Resources</div>
+                        <span class="partner-card__sector">Mineração</span>
+                    </div>
+                    <div class="partner-card" data-animate="fade-up" data-delay="0.2">
+                        <div class="partner-card__logo">LongPing High-Tech</div>
+                        <span class="partner-card__sector">Agro · Sementes</span>
+                    </div>
+                    <div class="partner-card" data-animate="fade-up" data-delay="0.3">
+                        <div class="partner-card__logo">Valore</div>
+                        <span class="partner-card__sector">ESG · Sustentabilidade</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPACTO -->
+        <section id="impacto" class="section section--impacto">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__tag">Impacto Real</span>
+                    <h2 class="section__title">Não só <span class="text-gradient-gold">palavras</span>. Números.</h2>
+                    <p class="section__description">Impacto real comprovado com presença física em Paracatu e Vazante, Minas Gerais.</p>
+                </div>
+                <div class="impact-grid">
+                    <div class="impact-card" data-animate="counter">
+                        <div class="impact-card__number" data-count="240">0</div>
+                        <div class="impact-card__suffix">+</div>
+                        <p class="impact-card__label">Mudas nativas plantadas</p>
+                        <span class="impact-card__detail">Cerrado · Paracatu e Vazante (MG)</span>
+                    </div>
+                    <div class="impact-card" data-animate="counter">
+                        <div class="impact-card__number" data-count="4">0</div>
+                        <div class="impact-card__suffix"></div>
+                        <p class="impact-card__label">Parceiros corporativos</p>
+                        <span class="impact-card__detail">Bayer · Nexa · LongPing · Valore</span>
+                    </div>
+                    <div class="impact-card" data-animate="counter">
+                        <div class="impact-card__number" data-count="6">0</div>
+                        <div class="impact-card__suffix">/6</div>
+                        <p class="impact-card__label">Smart contracts on-chain</p>
+                        <span class="impact-card__detail">Polygon Amoy testnet · 13/13 testes ✓</span>
+                    </div>
+                    <div class="impact-card" data-animate="counter">
+                        <div class="impact-card__number" data-count="1">0</div>
+                        <div class="impact-card__suffix">º</div>
+                        <p class="impact-card__label">Certificado NFT emitido</p>
+                        <span class="impact-card__detail">Certificado #0 · Testnet</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCKCHAIN -->
+        <section id="blockchain" class="section section--blockchain">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__tag">Tecnologia</span>
+                    <h2 class="section__title">Certificado <span class="text-gradient">imutável</span> na Blockchain</h2>
+                    <p class="section__description">Cada certificado é um NFT (ERC-721) na Polygon. Verificável por qualquer pessoa, para sempre.</p>
+                </div>
+                <div class="blockchain-content">
+                    <div class="nft-mockup" data-animate="nft-rotate">
+                        <div class="nft-card">
+                            <div class="nft-card__header">
+                                <span class="nft-card__badge">NFT ERC-721</span>
+                                <span class="nft-card__network">Polygon</span>
+                            </div>
+                            <div class="nft-card__icon">🏆</div>
+                            <h3 class="nft-card__title">Certificado de Compensação<br>de Carbono</h3>
+                            <div class="nft-card__divider"></div>
+                            <div class="nft-card__meta">
+                                <div class="nft-card__meta-item">
+                                    <span class="nft-card__meta-label">Empresa</span>
+                                    <span class="nft-card__meta-value">Bayer Brasil Ltda</span>
+                                </div>
+                                <div class="nft-card__meta-item">
+                                    <span class="nft-card__meta-label">Emissões</span>
+                                    <span class="nft-card__meta-value">10 tCO₂e</span>
+                                </div>
+                                <div class="nft-card__meta-item">
+                                    <span class="nft-card__meta-label">Data da Queima</span>
+                                    <span class="nft-card__meta-value">07/05/2026</span>
+                                </div>
+                                <div class="nft-card__meta-item">
+                                    <span class="nft-card__meta-label">Hash</span>
+                                    <span class="nft-card__meta-value nft-card__meta-value--hash">0x7a3f...e9b2</span>
+                                </div>
+                                <div class="nft-card__meta-item">
+                                    <span class="nft-card__meta-label">Protocolo</span>
+                                    <span class="nft-card__meta-value">Toucan Protocol (BCT)</span>
+                                </div>
+                            </div>
+                            <div class="nft-card__footer">
+                                <span>Emitido por DoubleDyn</span>
+                                <span>Lei 15.042/2024 (SBCE)</span>
+                            </div>
+                        </div>
+                        <div class="nft-glow"></div>
+                    </div>
+                    <div class="blockchain-features">
+                        <div class="blockchain-feature" data-animate="fade-left">
+                            <div class="blockchain-feature__icon">🔗</div>
+                            <div>
+                                <h4 class="blockchain-feature__title">Imutável</h4>
+                                <p class="blockchain-feature__text">Registrado para sempre na blockchain Polygon. Ninguém pode alterar ou falsificar.</p>
+                            </div>
+                        </div>
+                        <div class="blockchain-feature" data-animate="fade-left" data-delay="0.1">
+                            <div class="blockchain-feature__icon">🔍</div>
+                            <div>
+                                <h4 class="blockchain-feature__title">Verificável</h4>
+                                <p class="blockchain-feature__text">Qualquer pessoa pode verificar o certificado on-chain. Transparência total.</p>
+                            </div>
+                        </div>
+                        <div class="blockchain-feature" data-animate="fade-left" data-delay="0.2">
+                            <div class="blockchain-feature__icon">🛡️</div>
+                            <div>
+                                <h4 class="blockchain-feature__title">Custódia Segura</h4>
+                                <p class="blockchain-feature__text">Carteira exclusiva por empresa. A empresa não precisa entender de crypto.</p>
+                            </div>
+                        </div>
+                        <div class="blockchain-feature" data-animate="fade-left" data-delay="0.3">
+                            <div class="blockchain-feature__icon">⚡</div>
+                            <div>
+                                <h4 class="blockchain-feature__title">Baixo Custo</h4>
+                                <p class="blockchain-feature__text">Polygon = gas fee ~R$ 0,50. Certificação premium a custo marginal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA FINAL -->
+        <section id="cta" class="section section--cta">
+            <div class="container">
+                <div class="cta-content" data-animate="fade-up">
+                    <h2 class="cta__title">Comece sua jornada <span class="text-gradient">carbono zero</span></h2>
+                    <p class="cta__subtitle">Calcule suas emissões gratuitamente e descubra quanto sua empresa precisa compensar.</p>
+                    <div class="cta__buttons">
+                        <a href="https://doubledyn-site.vercel.app/#calculadora" class="btn btn--primary btn--lg" id="ctaCalculadora">
+                            <span>🧮 Calculadora Gratuita</span>
+                        </a>
+                        <a href="https://wa.me/5511924526590?text=Olá! Gostaria de saber mais sobre a certificação de carbono da DoubleDyn." class="btn btn--whatsapp btn--lg" target="_blank" id="ctaWhatsapp">
+                            <span>💬 Falar no WhatsApp</span>
+                        </a>
+                        <a href="https://doubledyn-site.vercel.app/agendamento.html" class="btn btn--ghost btn--lg" id="ctaAgendar">
+                            <span>📅 Agendar Reunião</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer id="footer" class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand">
+                    <div class="footer__logo">
+                        <span class="navbar__logo-icon">🦋</span>
+                        <span class="navbar__logo-text">DoubleDyn</span>
+                    </div>
+                    <p class="footer__tagline">Transformamos cultura local em impacto ambiental real.</p>
+                    <div class="footer__powered">
+                        <span>Powered by</span>
+                        <span class="footer__polygon">Polygon</span>
+                    </div>
+                </div>
+                <div class="footer__links">
+                    <h4 class="footer__heading">Links</h4>
+                    <a href="#problema" class="footer__link">Problema</a>
+                    <a href="#solucao" class="footer__link">Solução</a>
+                    <a href="#parceiros" class="footer__link">Parceiros</a>
+                    <a href="#impacto" class="footer__link">Impacto</a>
+                    <a href="#blockchain" class="footer__link">Blockchain</a>
+                </div>
+                <div class="footer__contact">
+                    <h4 class="footer__heading">Contato</h4>
+                    <a href="https://instagram.com/doubledynapp" target="_blank" class="footer__link">📸 Instagram</a>
+                    <a href="https://wa.me/5511924526590" target="_blank" class="footer__link">💬 WhatsApp</a>
+                    <a href="mailto:DoubleDynaapp@gmail.com" class="footer__link">✉️ Email</a>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2026 DoubleDyn. Todos os direitos reservados.</p>
+                <p>Lei 15.042/2024 · SBCE · Polygon Blockchain</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorial Técnico — Ingaí-MG | DoubleDyn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0a0f1a; --card: #111827; --border: rgba(255,255,255,0.08); --green: #10b981; --blue: #3b82f6; --text: #e5e7eb; --muted: #6b7280; --mono: 'JetBrains Mono', monospace; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .header { text-align: center; padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .header .subtitle { color: var(--muted); font-size: 0.95rem; }
+        .badge { display: inline-block; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+        .badge-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+        .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+        .section { margin-bottom: 2.5rem; }
+        .section h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .info-item { padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; }
+        .info-label { font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 0.3rem; }
+        .info-value { font-size: 1rem; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { text-align: left; padding: 0.8rem; background: rgba(0,0,0,0.3); color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 0.8rem; border-bottom: 1px solid var(--border); }
+        .hash { font-family: var(--mono); font-size: 0.75rem; color: var(--blue); word-break: break-all; }
+        .status-ok { color: var(--green); font-weight: 600; }
+        .total-row td { font-weight: 700; background: rgba(16,185,129,0.05); border-top: 2px solid var(--green); }
+        .footer { text-align: center; padding: 2rem 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+        .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+        .team-member { padding: 0.8rem; background: rgba(0,0,0,0.2); border-radius: 8px; }
+        .team-name { font-weight: 600; font-size: 0.95rem; }
+        .team-role { font-size: 0.8rem; color: var(--muted); }
+        .btn-print { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.5rem; background: var(--green); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; text-decoration: none; margin-top: 1rem; }
+        .btn-print:hover { opacity: 0.9; }
+        @media (max-width: 640px) { .info-grid, .team-grid { grid-template-columns: 1fr; } .header h1 { font-size: 1.5rem; } }
+        @media print { body { background: #fff; color: #111; } .card { border: 1px solid #ddd; } .hash { color: #2563eb; } .btn-print { display: none; } th { background: #f3f4f6; color: #374151; } td { border-color: #e5e7eb; } .header { border-color: #e5e7eb; } .section h2 { border-color: #e5e7eb; } .footer { border-color: #e5e7eb; } .info-item { background: #f9fafb; } .team-member { background: #f9fafb; } .total-row td { background: rgba(16,185,129,0.1); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="margin-bottom: 1rem;">
+                <span class="badge badge-green">✅ CERTIFICADO VERIFICADO</span>
+                <span class="badge badge-blue">POLYGON MAINNET</span>
+            </div>
+            <h1>Memorial Técnico de Neutralização</h1>
+            <p class="subtitle">Operação Sustentável — Ingaí-MG | DoubleDyn Ecotoken</p>
+        </div>
+
+        <div class="section">
+            <h2>📋 Dados da Operação</h2>
+            <div class="card">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Cliente</span>
+                        <span class="info-value">Prefeitura Municipal de Ingaí-MG</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Evento</span>
+                        <span class="info-value">Festa da Fogueira de São João Batista 2026</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Volume Neutralizado</span>
+                        <span class="info-value" style="color: var(--green); font-size: 1.3rem;">100 tCO₂e</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data da Certificação</span>
+                        <span class="info-value">24 de Junho de 2026</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Metodologia</span>
+                        <span class="info-value">GHG Protocol + MCTI/SEEG</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Certificado NFT</span>
+                        <span class="info-value">DoubleDyn Official Seal #1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔗 Certificado On-Chain (NFT ERC-721)</h2>
+            <div class="card">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Contrato</span>
+                        <span class="hash">0x307e5cf06b87e47614CA66BF1BC6884B6Fca8E2f</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Rede</span>
+                        <span class="info-value">Polygon Mainnet</span>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <span class="info-label">Transaction Hash (Mint)</span>
+                    <span class="hash">0x422786f57bf40429620857a1ece9bbf336d248ee95f9fa32cd394ee6dca91d15</span>
+                </div>
+                <div style="margin-top: 0.8rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <span class="info-label">Carteira Emissora (Deployer)</span>
+                    <span class="hash">0xc3f23C5f2959F6c9DA7f089dA2864E90c75Fe580</span>
+                </div>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="https://polygonscan.com/tx/0x422786f57bf40429620857a1ece9bbf336d248ee95f9fa32cd394ee6dca91d15" target="_blank" style="color: var(--blue); text-decoration: none; font-weight: 600;">🔍 Verificar no PolygonScan →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔥 Registros de Queima (Retirement Hashes)</h2>
+            <div class="card" style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Volume</th>
+                            <th>Retirement ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td style="font-weight: 600;">20 tCO₂e</td>
+                            <td class="hash">8453-0x2dce15e5d73e70f801d34d48253b71ddfc925e12516c399a5c6b2e0420c0538d-0</td>
+                            <td class="status-ok">✅ Retired</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td style="font-weight: 600;">30 tCO₂e</td>
+                            <td class="hash">8453-0x94b479e5b016cb9d8eb2ab19f6860f80e51e044d7b528ca7de9d8975a27dae1b-0</td>
+                            <td class="status-ok">✅ Retired</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td style="font-weight: 600;">35 tCO₂e</td>
+                            <td class="hash">8453-0x426fb9d6325af5b515c8bcb12a22bd1f088261f43a45feb2418b54bea12b47c3-0</td>
+                            <td class="status-ok">✅ Retired</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td style="font-weight: 600;">15 tCO₂e</td>
+                            <td class="hash">8453-0x6cafb46138c8f9a5b2fc1aa69957d88fcdb60e0dd0119202b5d5b893e4f448aa-0</td>
+                            <td class="status-ok">✅ Retired</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td></td>
+                            <td style="color: var(--green);">100 tCO₂e</td>
+                            <td>Total Neutralizado</td>
+                            <td class="status-ok">✅ Completo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Metodologia</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">A neutralização foi realizada seguindo os padrões internacionais do <strong>GHG Protocol</strong> (Greenhouse Gas Protocol), com fatores de emissão do <strong>MCTI (Ministério da Ciência, Tecnologia e Inovações)</strong> e dados do <strong>SEEG (Sistema de Estimativas de Emissões e Remoções de Gases de Efeito Estufa)</strong>.</p>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Protocolo de Cálculo</span>
+                        <span class="info-value">GHG Protocol Brasil</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Fatores de Emissão</span>
+                        <span class="info-value">MCTI / SEEG 2024</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Blockchain de Registro</span>
+                        <span class="info-value">Polygon (PoS) + Base (L2)</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Padrão do Certificado</span>
+                        <span class="info-value">ERC-721 (NFT)</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--muted);">Os créditos de carbono foram adquiridos via protocolo Toucan (KlimaDAO) na rede Base e queimados (retired) de forma permanente e irreversível. A prova de queima está registrada publicamente na blockchain e pode ser verificada por qualquer pessoa.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>👥 Equipe Responsável</h2>
+            <div class="card">
+                <div class="team-grid">
+                    <div class="team-member">
+                        <span class="team-name">Diego Augusto</span>
+                        <span class="team-role">CEO & Founder</span>
+                    </div>
+                    <div class="team-member">
+                        <span class="team-name">Rony Costa</span>
+                        <span class="team-role">CTO & Co-Founder</span>
+                    </div>
+                    <div class="team-member">
+                        <span class="team-name">Pedro Henrique</span>
+                        <span class="team-role">COO & Co-Founder</span>
+                    </div>
+                    <div class="team-member">
+                        <span class="team-name">Raphaela Oliveira</span>
+                        <span class="team-role">Chief Commercial Officer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+        </div>
+
+        <div class="footer">
+            <p><strong>DoubleDyn Ecotoken</strong> — Ativos Ambientais com Rastreabilidade Real</p>
+            <p style="margin-top: 0.3rem;">doubledyn.com | @doubledynapp</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Este memorial é um documento público de verificação. Todas as transações podem ser auditadas na blockchain.</p>
+        </div>
+    </div>
+</body>
+</html>
