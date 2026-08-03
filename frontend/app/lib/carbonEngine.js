@@ -1,8 +1,7 @@
-// SPDX-License-Identifier: MIT
-// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== DoubleDyn Carbon Engine — v4.0 (React Module) =====
 // Reescrito como módulo ES6 puro, sem dependência do DOM.
 // Fonte: GHG Protocol Brasil, IPCC AR6, MCTI 2024, ABNT NBR ISO 14064.
+import { FACTORS } from './factors';
 
 // ===== CONSTANTES SETORIAIS =====
 // Benchmarks de intensidade (tCO₂e por R$ 1 mi de faturamento) — SEEG/GHG Protocol Brasil.
@@ -76,33 +75,37 @@ export const DADOS_MERCADO = {
 };
 
 // ===== FATORES DE EMISSÃO (GHG Protocol Brasil + IPCC) =====
+// Fonte única e auditada: app/lib/factors.js (auditoria R1 — eletricidade MCTI 2025).
 const FATORES = {
-  // Eletricidade (tCO₂/MWh) — fator médio anual do SIN, MCTI/SIRENE 2025 (0,0461).
-  // Atualizado em 2026-08-01 (auditoria R1): o valor anterior 0,0817 era o fator de 2016.
-  // Fonte: gov.br/mcti/sirene — planilha "Fator Médio Anual (tCO2/MWh)".
-  ELETRICIDADE: 0.0461,
+  // Eletricidade (tCO₂/MWh — MCTI 2025, fator médio anual do SIN)
+  ELETRICIDADE: FACTORS.ELETRICIDADE.valor,
   // Combustíveis estacionários
-  GLP: 2.983,         // kgCO₂/kg
-  GAS_NATURAL: 2.07,  // kgCO₂/m³
-  DIESEL_EST: 2.603,  // kgCO₂/litro (gerador)
-  LENHA: 1460,        // kgCO₂/tonelada
+  GLP: FACTORS.GLP.valor,            // kgCO₂/kg
+  GAS_NATURAL: FACTORS.GAS_NATURAL.valor, // kgCO₂/m³
+  DIESEL_EST: FACTORS.DIESEL_EST.valor,   // kgCO₂/litro (gerador)
+  LENHA: FACTORS.LENHA.valor,        // kgCO₂/tonelada
   // Combustíveis veiculares
-  GASOLINA: 2.212,    // kgCO₂/litro
-  DIESEL: 2.603,      // kgCO₂/litro
-  ETANOL: 0.0,        // neutro (biocombustível)
-  GNV: 2.07,          // kgCO₂/m³
+  GASOLINA: FACTORS.GASOLINA.valor,  // kgCO₂/litro
+  DIESEL: FACTORS.DIESEL_EST.valor,  // kgCO₂/litro
+  ETANOL: FACTORS.ETANOL.valor,      // neutro (biocombustível)
+  GNV: FACTORS.GNV.valor,            // kgCO₂/m³
   // Viagens aéreas
-  AEREO_DOM: 0.133,   // kgCO₂/km/passageiro
-  AEREO_INT: 0.102,   // kgCO₂/km/passageiro
-  DIST_DOM: 1500,     // km trecho médio doméstico
-  DIST_INT: 8000,     // km trecho médio internacional
+  AEREO_DOM: FACTORS.AEREO_DOM.valor,    // kgCO₂/km/passageiro
+  AEREO_INT: FACTORS.AEREO_INT.valor,    // kgCO₂/km/passageiro
+  DIST_DOM: 1500,     // km trecho médio doméstico (premissa de distância)
+  DIST_INT: 8000,     // km trecho médio internacional (premissa de distância)
   // Outros
-  AGUA: 0.708,        // kgCO₂/m³
-  PAPEL: 3.0,         // kgCO₂/resma
-  AR_COND: 0.05,      // tCO₂/unidade/ano
-  REFRIG: { nenhuma: 0, pequena: 0.5, media: 2.0, grande: 5.0 },
-  RESIDUOS: 0.5,      // tCO₂/tonelada aterro
-  RESIDUOS_PERIG: 1.2,// kgCO₂/kg
+  AGUA: FACTORS.AGUA.valor,          // kgCO₂/m³
+  PAPEL: FACTORS.PAPEL.valor,        // kgCO₂/resma
+  AR_COND: FACTORS.AR_COND.valor,    // tCO₂/unidade/ano
+  REFRIG: FACTORS.REFRIG.valor,
+  RESIDUOS: FACTORS.RESIDUOS.valor,  // tCO₂/tonelada aterro
+  RESIDUOS_PERIG: FACTORS.RESIDUOS_PERIG.valor, // kgCO₂/kg
+  // Módulo setorial (v1)
+  METANO_ENTERIC: FACTORS.METANO_ENTERIC.valor,       // tCO₂e/cabeça/ano
+  N2O_FERTILIZANTE: FACTORS.N2O_FERTILIZANTE.valor,   // tCO₂e/kg N
+  QUEIMA_RESIDUOS_AGRO: FACTORS.QUEIMA_RESIDUOS_AGRO.valor, // tCO₂e/t queimada
+  REFRIG_COMERCIAL: FACTORS.REFRIG_COMERCIAL.valor,   // tCO₂e/unidade/ano
 };
 
 // ===== UTILITÁRIOS =====
@@ -117,6 +120,20 @@ export function parseBRL(str) {
 
 function n(val) {
   return parseFloat(val) || 0;
+}
+
+// ── Módulo setorial (v1: agro + comércio) — fatores de factors.js (fonte única) ──
+function computeSectorEmissions(v, F) {
+  const setor = v?.setor;
+  let emissao = 0;
+  if (setor === 'agro') {
+    emissao += n(v.rebanhoBovino) * F.METANO_ENTERIC;
+    emissao += n(v.fertilizanteKg) * F.N2O_FERTILIZANTE;
+    emissao += n(v.queimaResiduosT) * F.QUEIMA_RESIDUOS_AGRO;
+  } else if (setor === 'comercio') {
+    emissao += n(v.lojasRefrigeracao) * F.REFRIG_COMERCIAL;
+  }
+  return emissao;
 }
 
 // ===== FUNÇÃO PRINCIPAL DE CÁLCULO =====
@@ -193,8 +210,11 @@ export function calculateEmissions(data, opts = {}) {
   const emResiduosPerig = (residuosPerigosos * FATORES.RESIDUOS_PERIG / 1000) * 12;
   const emissaoResiduos = emResiduosSolidos + emResiduosPerig;
 
+  // ── MÓDULO SETORIAL (v1: agro + comércio) ──
+  const emissaoSetor = computeSectorEmissions(data, FATORES);
+
   // ── TOTAL ──
-  let emissaoBase = emissaoEnergia + emissaoTransporte + emissaoInstalacoes + emissaoResiduos;
+  let emissaoBase = emissaoEnergia + emissaoTransporte + emissaoInstalacoes + emissaoResiduos + emissaoSetor;
 
   // ── MODO ESTIMATIVA POR SETOR (usuário que "não sabe" nunca fica bloqueado) ──
   const estimadoPorCNAE = Boolean(opts?.estimarSeVazio) && emissaoBase < 0.001;
@@ -330,6 +350,7 @@ export function calculateEmissions(data, opts = {}) {
     { nome: 'Frota', valor: emissaoTransporte, insight: 'Sua frota é o maior emissor. A substituição gradual por veículos flex ou elétricos pode reduzir até 35% das emissões de transporte.' },
     { nome: 'Instalações', valor: emissaoInstalacoes, insight: 'Suas instalações têm alto potencial de otimização. Retrofit de climatização e eficiência hídrica podem reduzir até 25% das emissões.' },
     { nome: 'Resíduos', valor: emissaoResiduos, insight: 'A gestão de resíduos é seu ponto crítico. Programas estruturados de reciclagem e compostagem podem reduzir até 40% das emissões nesta categoria.' },
+    { nome: 'Atividade', valor: emissaoSetor, insight: 'Emissões específicas da sua atividade (rebanho, fertilizantes, queima agrícola ou refrigeração comercial). Práticas de manejo podem reduzir significativamente esta parcela.' },
   ];
   const maiorCategoria = [...categorias].sort((a, b) => b.valor - a.valor)[0];
 
@@ -369,7 +390,7 @@ export function calculateEmissions(data, opts = {}) {
     // Empresa
     empresa, setor, funcionarios, estimadoPorCNAE,
     // Categorias de emissão
-    emissaoEnergia, emissaoTransporte, emissaoInstalacoes, emissaoResiduos,
+    emissaoEnergia, emissaoTransporte, emissaoInstalacoes, emissaoResiduos, emissaoSetor,
     emissaoBase, margemSeguranca, totalEmissao,
     // DQS
     dqsScore, pcrSeal, pcrColor,
@@ -435,23 +456,27 @@ export function computePartialEstimates(values = {}) {
   const residuos = (n(v.residuos) * (1 - n(v.reciclagem) / 100) * FATORES.RESIDUOS) * 12
     + (n(v.residuosPerigosos) * FATORES.RESIDUOS_PERIG / 1000) * 12;
 
+  // ── MÓDULO SETORIAL (v1) ──
+  const atividade = computeSectorEmissions(v, FATORES);
+
   const categorias = [
     { nome: 'Energia', valor: energia },
     { nome: 'Frota', valor: frota },
     { nome: 'Instalações', valor: instalacoes },
     { nome: 'Resíduos', valor: residuos },
+    { nome: 'Atividade', valor: atividade },
   ];
 
-  const totalBase = energia + frota + instalacoes + residuos;
+  const totalBase = energia + frota + instalacoes + residuos + atividade;
   const categoriasPreenchidas = categorias.filter(c => c.valor > 0).length;
   const totalComMargem = totalBase * 1.15; // mesma margem do calculateEmissions (relatório final)
 
   return {
     categorias,
-    energia, frota, instalacoes, residuos, // acesso direto por categoria
+    energia, frota, instalacoes, residuos, atividade, // acesso direto por categoria
     totalBase,          // sem margem — os 15% de segurança entram no cálculo final
-    totalComMargem,
+    totalComMargem: totalBase * 1.15,
     categoriasPreenchidas,
-    custoEstimado: 8500 + totalComMargem * 120, // mesma fórmula do relatório final (custoTradicional)
+    custoEstimado: 8500 + totalComMargem * 120, // paridade com o relatório final
   };
 }

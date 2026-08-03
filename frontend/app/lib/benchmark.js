@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: MIT
-// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Benchmarking Setorial (v1) — plataforma de inteligência competitiva =====
 // Compara a intensidade de emissão do cliente (tCO₂e por R$ 1 milhão de faturamento)
 // com a média do seu setor (CNAE) e estima o percentil de posição.

@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: MIT
-// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Teste de Paridade + Sanidade — DoubleDyn Carbon Engine =====
 // Roda com: npm test
 // Verifica que o meter ao vivo (computePartialEstimates) produz EXATAMENTE
@@ -16,14 +14,26 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'dd-parity-'));
 
 // Os libs são ESM, mas o package.json do app não tem "type":"module"
 // (Next.js). Copiamos para um dir temporário com package.json próprio.
+// O motor foi refatorado para fonte única em factors.js e usa imports
+// relativos SEM extensão (padrão webpack) — aqui reescrevemos para .mjs
+// para o Node ESM resolver.
 fs.writeFileSync(path.join(TMP, 'package.json'), JSON.stringify({ type: 'module' }));
-for (const f of ['carbonEngine.js', 'actionPlan.js', 'benchmark.js']) {
-  fs.copyFileSync(path.join(ROOT, 'app/lib', f), path.join(TMP, f.replace('.js', '.mjs')));
+const LIBS = ['carbonEngine.js', 'actionPlan.js', 'benchmark.js', 'factors.js', 'roiSimulator.js'];
+for (const f of LIBS) {
+  const src = path.join(ROOT, 'app/lib', f);
+  if (!fs.existsSync(src)) {
+    console.error(`FALHA: app/lib/${f} não existe — o motor mudou de estrutura?`);
+    process.exit(1);
+  }
+  let content = fs.readFileSync(src, 'utf8');
+  content = content.replace(/from '\.\/([a-zA-Z0-9_-]+)'/g, "from './$1.mjs'");
+  fs.writeFileSync(path.join(TMP, f.replace('.js', '.mjs')), content);
 }
 
 const engine = await import(path.join(TMP, 'carbonEngine.mjs'));
 const actionPlan = await import(path.join(TMP, 'actionPlan.mjs'));
 const benchmark = await import(path.join(TMP, 'benchmark.mjs'));
+const roiSimulator = await import(path.join(TMP, 'roiSimulator.mjs'));
 
 let pass = 0, fail = 0;
 const check = (name, cond, extra = '') => {
@@ -74,6 +84,39 @@ const vazio = engine.computePartialEstimates({});
 check('form vazio -> 0 e sem NaN', vazio.totalBase === 0 && !isNaN(vazio.totalBase));
 const b = benchmark.computeBenchmark({ emissionsTotal: 500, revenueMillions: 5, sector: 'industria' });
 check('benchmark ok com rank válido', b.ok && b.rank >= 1 && b.rank <= 99, `rank=${b.rank}`);
+
+console.log('5) SIMULADOR DE ROI (cap, DQS, cenários, payback/retorno)');
+const baseRoi = engine.calculateEmissions(full);
+const planoRef = actionPlan.gerarPlanoDeAcao(baseRoi);
+const invDefault = { a1: 1, a2: 1, a3: 1 };
+const s = roiSimulator.simularROI(baseRoi, invDefault);
+check('3 itens (uma por ação)', s.itens.length === 3, `(${s.itens.length})`);
+check('investTotal == soma dos invests', near(s.investTotal, s.itens.reduce((a, i) => a + i.invest, 0)));
+check('reducaoTotal == soma das reduções', near(s.reducaoTotal, s.itens.reduce((a, i) => a + i.reducao, 0)));
+// Cap de redução: pct > 1 NÃO aumenta redução (100% é o teto)
+const sOver = roiSimulator.simularROI(baseRoi, { a1: 1.5, a2: 1.5, a3: 1.5 });
+check('cap: pct 1.5 não aumenta redução', sOver.itens.every((it, i) => near(it.reducao, Math.min(1.5, 1) * (planoRef.acoes[i].reducaoTonnes || 0))));
+check('cap: redução com pct 1.5 == redução com pct 1', near(sOver.reducaoTotal, s.reducaoTotal));
+// Clamp de pct: valores absurdos são limitados a [0, 1.5]
+const sClamp = roiSimulator.simularROI(baseRoi, { a1: 99, a2: -5, a3: 1 });
+check('clamp: 99 -> 1.5', near(sClamp.itens[0].pct, 1.5));
+check('clamp: -5 -> 0', near(sClamp.itens[1].pct, 0));
+// DQS nunca passa de 1000 e nunca cai
+check('dqsFinal <= 1000', s.dqsFinal <= 1000);
+check('dqsFinal >= dqsAtual', s.dqsFinal >= s.dqsAtual);
+// Cenários ordenados (conservador <= médio <= otimista)
+check('cenários ordenados', s.cenarios.conservador <= s.cenarios.medio && s.cenarios.medio <= s.cenarios.otimista);
+check('banda conservador == 0.6x', near(s.cenarios.conservador, s.economiaTotal * 0.6));
+check('banda otimista == 1.4x', near(s.cenarios.otimista, s.economiaTotal * 1.4));
+// Payback e retorno coerentes
+if (s.investTotal > 0 && s.economiaTotal > 0) {
+  check('payback médio == (invest/economia)*12', near(s.paybackMedio, (s.investTotal / s.economiaTotal) * 12));
+  check('retorno anual == (economia/invest)*100', near(s.retornoAnualPct, (s.economiaTotal / s.investTotal) * 100));
+} else {
+  check('payback médio computável', false, 'invest/economia = 0');
+}
+const sZero = roiSimulator.simularROI(baseRoi, { a1: 0, a2: 0, a3: 0 });
+check('payback null quando economia = 0', sZero.paybackMedio === null);
 
 console.log(`\nRESULTADO: ${pass} PASS / ${fail} FAIL`);
 process.exit(fail ? 1 : 0);

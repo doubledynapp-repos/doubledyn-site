@@ -26,11 +26,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata = {
   metadataBase: new URL('https://doubledyn.com'),
   title: "DoubleDyn Ecotoken — Calculadora de Impacto Ambiental Corporativo",
-  description: "Descubra o impacto ambiental da sua empresa em 2 minutos. Calculadora gratuita de carbono para empresas. Relatório ESG personalizado, DQS Score e compliance com a Lei 15.042/2024 (SBCE).",
+  description: "Descubra o impacto ambiental da sua empresa agora. Calculadora gratuita de carbono para empresas. Relatório ESG personalizado, DQS Score e compliance com a Lei 15.042/2024 (SBCE).",
   keywords: ['calculadora carbono', 'impacto ambiental empresa', 'SBCE', 'compliance ESG', 'crédito de carbono', 'DoubleDyn'],
   openGraph: {
     title: 'DoubleDyn — Calculadora de Impacto Ambiental Corporativo',
-    description: 'Descubra o impacto ambiental da sua empresa em 2 minutos e receba um plano de ação personalizado.',
+    description: 'Descubra o impacto ambiental da sua empresa agora e receba um plano de ação personalizado.',
     url: 'https://doubledyn.com',
     siteName: 'DoubleDyn Ecotoken',
     images: [{ url: '/assets/og-image.png', width: 1200, height: 630 }],

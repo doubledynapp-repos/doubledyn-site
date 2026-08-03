@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: MIT
-// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Zod Schema — Calculadora DoubleDyn =====
 // Validação por step. Cada step tem seu próprio schema parcial.
 
@@ -20,6 +18,11 @@ export const step1Schema = z.object({
   exportaUE: z.enum(['sim', 'nao']).optional().default('nao'),
   setorCBAM: z.string().optional().default('outro'),
   jaFazInventario: z.enum(['sim', 'nao']).optional().default('nao'),
+  // ── Módulos setoriais (opcionais, aparecem conforme o setor) ──
+  rebanhoBovino: z.coerce.number().min(0).optional(),     // agro: cabeças
+  fertilizanteKg: z.coerce.number().min(0).optional(),    // agro: kg N/ano
+  queimaResiduosT: z.coerce.number().min(0).optional(),   // agro: t queimadas/ano
+  lojasRefrigeracao: z.coerce.number().min(0).optional(), // comércio: nº unidades
 });
 
 // ── STEP 2: ENERGIA ──

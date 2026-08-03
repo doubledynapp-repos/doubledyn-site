@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { calculateDQS } from '../lib/dqsEngine';
 import { useAuth } from '../lib/auth';
 import { getApiUrl } from '../lib/api';
+import { computeBenchmark } from '../lib/benchmark';
 
 export default function DashboardOverview() {
   const { user, token } = useAuth();
@@ -21,6 +22,25 @@ export default function DashboardOverview() {
 
   const [emissionsInput, setEmissionsInput] = useState(100);
   const [offsetInput, setOffsetInput] = useState(100);
+
+  // Diagnóstico vindo da calculadora (fluxo product-led) — contexto não se perde
+  const [calcData, setCalcData] = useState(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('doubledyn_calc');
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d && d.totalEmissao) setCalcData(d);
+      }
+    } catch (e) { /* localStorage indisponível — segue sem o card */ }
+  }, []);
+  const calcBench = useMemo(() => calcData
+    ? computeBenchmark({
+        emissionsTotal: calcData.totalEmissao,
+        revenueMillions: (calcData.faturamento || 0) / 1e6,
+        sector: calcData.setor || 'outro',
+      })
+    : null, [calcData]);
 
   useEffect(() => {
     if (!token) return;
@@ -178,6 +198,36 @@ export default function DashboardOverview() {
           </button>
         </div>
       </div>
+
+      {/* Diagnóstico da calculadora — continuação do contexto */}
+      {calcData && (
+        <div style={{
+          background: bgCard,
+          border: '1px solid rgba(195,255,0,0.22)',
+          borderRadius: '16px',
+          padding: '20px 24px',
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}>
+          <div>
+            <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '2px', color: accent, marginBottom: '8px' }}>
+              📋 SEU DIAGNÓSTICO DA CALCULADORA
+            </div>
+            <div style={{ fontSize: '16px', fontWeight: '800', color: '#e8efe8', marginBottom: '4px' }}>{calcData.empresa}</div>
+            <div style={{ fontSize: '13px', color: textDim }}>
+              {Math.round(calcData.totalEmissao)} tCO₂e/ano · DQS {calcData.dqsScore} ({calcData.pcrSeal})
+              {calcBench && calcBench.ok && <span> · Percentil {calcBench.rank} do seu setor</span>}
+            </div>
+          </div>
+          <a href="/dashboard/settings" style={{ ...btnPrimary, textDecoration: 'none', display: 'inline-flex' }}>
+            Preencher dados reais →
+          </a>
+        </div>
+      )}
 
       {/* DQS Score Hero */}
       <div style={{

@@ -1,6 +1,6 @@
 // Nota Metodológica — página pública (estática)
 import {
-  META, POSICIONAMENTO, SCOPES, FACTORS, FORMULAS,
+  META, POSICIONAMENTO, SCOPES, FACTORS_TABLE, FORMULAS,
   BENCHMARKS, DQS, LIMITACOES,
 } from '../lib/methodologyData';
 
@@ -17,6 +17,12 @@ const p = { color: C.dim, fontSize: '0.92rem', lineHeight: 1.7, margin: '0 0 10p
 const table = { width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' };
 const th = { textAlign: 'left', padding: '10px 12px', color: C.accent, borderBottom: `1px solid ${C.border}`, fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.5px' };
 const td = { padding: '10px 12px', color: C.dim, borderBottom: '1px solid rgba(255,255,255,0.05)', verticalAlign: 'top' };
+
+const STATUS_BADGE = {
+  oficial: { label: 'OFICIAL', color: '#2ecc71', bg: 'rgba(46,204,113,0.10)' },
+  a_validar: { label: 'A VALIDAR', color: '#f1c40f', bg: 'rgba(241,196,15,0.08)' },
+  estimativa: { label: 'ESTIMATIVA', color: '#8fb898', bg: 'rgba(143,184,152,0.10)' },
+};
 
 function Card({ children, style }) {
   return <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: '14px', padding: '22px 26px', ...style }}>{children}</div>;
@@ -69,20 +75,29 @@ export default function Metodologia() {
           <Card>
             <table style={table}>
               <thead>
-                <tr><th style={th}>Fator</th><th style={th}>Valor</th><th style={th}>Unidade</th><th style={th}>Referência</th></tr>
+                <tr><th style={th}>Fator</th><th style={th}>Valor</th><th style={th}>Unidade</th><th style={th}>Referência</th><th style={th}>Status</th></tr>
               </thead>
               <tbody>
-                {FACTORS.map((f, i) => (
-                  <tr key={i}>
-                    <td style={td}>{f.fator}</td>
-                    <td style={{ ...td, color: C.text, fontWeight: 700 }}>{f.valor}</td>
-                    <td style={td}>{f.unidade}</td>
-                    <td style={td}>{f.fonte}</td>
-                  </tr>
-                ))}
+                {FACTORS_TABLE.map((f) => {
+                  const badge = STATUS_BADGE[f.status] || STATUS_BADGE.estimativa;
+                  return (
+                    <tr key={f.key}>
+                      <td style={td}>{f.fator}</td>
+                      <td style={{ ...td, color: C.text, fontWeight: 700 }}>{f.valor}</td>
+                      <td style={td}>{f.unidade}</td>
+                      <td style={td}>{f.fonte}{f.ano ? ` (${f.ano})` : ''}</td>
+                      <td style={td}>
+                        <span style={{ padding: '2px 10px', borderRadius: '12px', fontSize: '0.62rem', fontWeight: 800, letterSpacing: '1px', color: badge.color, background: badge.bg }}>{badge.label}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </Card>
+          <p style={{ ...p, marginTop: '14px', color: C.muted, fontSize: '0.8rem' }}>
+            Tabela gerada automaticamente a partir da fonte única de fatores (<code style={{ color: C.accent }}>factors.js</code>) — os mesmos valores usados pela calculadora. Fatores marcados como "a validar" ou "estimativa" serão auditados na Rodada 2.
+          </p>
         </section>
 
         {/* FORMULAS */}

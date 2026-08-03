@@ -6,6 +6,7 @@ import { STEP_SCHEMAS } from '../../lib/calcSchema';
 import { calculateEmissions, formatBRL, CNAE_TO_SETOR, RISCO_SETOR, PORTE_MAP, computePartialEstimates } from '../../lib/carbonEngine';
 import { computeBenchmark } from '../../lib/benchmark';
 import { gerarPlanoDeAcao } from '../../lib/actionPlan';
+import { simularROI } from '../../lib/roiSimulator';
 
 const TOTAL_STEPS = 6;
 
@@ -113,7 +114,12 @@ function BenchmarkCard({ result }) {
     <div className="bench-card">
       <div className="bench-head">
         <span className="bench-title">⚔️ Você vs. seu Setor</span>
-        <span className="bench-pill" style={{ color: style.color, background: style.bg }}>{style.label}</span>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span className={`origin-chip ${result.estimadoPorCNAE ? 'estimate' : 'informed'}`}>
+            {result.estimadoPorCNAE ? '🧮 ESTIMATIVA CNAE' : '📊 DADOS INFORMADOS'}
+          </span>
+          <span className="bench-pill" style={{ color: style.color, background: style.bg }}>{style.label}</span>
+        </div>
       </div>
 
       <div className="bench-main">
@@ -156,6 +162,63 @@ function BenchmarkCard({ result }) {
   );
 }
 
+// ── Simulador de ROI: ajuste o investimento e veja o retorno (feature principal) ──
+function RoiSimulatorCard({ result }) {
+  const [pcts, setPcts] = useState({ a1: 1, a2: 1, a3: 1 });
+  const roi = useMemo(() => simularROI(result, pcts), [result, pcts]);
+  const setPct = (key) => (e) => setPcts((p) => ({ ...p, [key]: parseFloat(e.target.value) }));
+
+  return (
+    <div className="roi-card">
+      <div className="roi-head">
+        <span className="roi-title">💹 Simule seu ROI</span>
+        <span className="plan-sub">Ajuste o investimento e veja o retorno · estimativas</span>
+      </div>
+      <div className="roi-body">
+        <div className="roi-sliders">
+          {roi.itens.map((item, i) => (
+            <div className="roi-slider-row" key={item.id || i}>
+              <div className="roi-slider-top">
+                <span className="roi-slider-label"><b>{i + 1}. {item.titulo}</b></span>
+                <span className="roi-slider-value">{formatBRL(item.invest)}</span>
+              </div>
+              <input
+                type="range" min="0" max="1.5" step="0.05"
+                value={pcts[`a${i + 1}`]} onChange={setPct(`a${i + 1}`)}
+                className="roi-range" aria-label={`Investimento em ${item.titulo}`}
+              />
+              <div className="roi-slider-meta">
+                <span>−{item.reducao.toFixed(0)} t/ano</span>
+                {item.economia > 0 && <span>+ {formatBRL(item.economia)}/ano</span>}
+                {item.paybackMeses !== null
+                  ? <span>payback ~{item.paybackMeses.toFixed(0)} meses</span>
+                  : <span>{item.custo === 0 ? 'custo zero' : 'habilitador'}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="roi-summary">
+          <div className="roi-summary-grid">
+            <div className="roi-stat"><span className="roi-stat-label">Investimento total</span><span className="roi-stat-value">{formatBRL(roi.investTotal)}</span></div>
+            <div className="roi-stat"><span className="roi-stat-label">Economia anual (médio)</span><span className="roi-stat-value">{formatBRL(roi.economiaTotal)}</span></div>
+            <div className="roi-stat"><span className="roi-stat-label">Payback médio</span><span className="roi-stat-value">{roi.paybackMedio ? `~${roi.paybackMedio.toFixed(0)} meses` : '—'}</span></div>
+            <div className="roi-stat"><span className="roi-stat-label">Exposição reduzida</span><span className="roi-stat-value">{formatBRL(roi.multaEvitadaTotal)}</span></div>
+            <div className="roi-stat"><span className="roi-stat-label">DQS</span><span className="roi-stat-value">{roi.dqsAtual} → {roi.dqsFinal}</span></div>
+            <div className="roi-stat"><span className="roi-stat-label">Retorno anual</span><span className="roi-stat-value">{roi.retornoAnualPct ? `${roi.retornoAnualPct.toFixed(0)}%` : '—'}</span></div>
+          </div>
+          <div className="roi-scenarios">
+            <span className="roi-scenario conservador">Conservador {formatBRL(roi.cenarios.conservador)}/ano</span>
+            <span className="roi-scenario medio">Médio {formatBRL(roi.cenarios.medio)}/ano</span>
+            <span className="roi-scenario otimista">Otimista {formatBRL(roi.cenarios.otimista)}/ano</span>
+          </div>
+          <a href="/register" className="btn btn-primary roi-cta">Criar conta grátis para salvar seu plano →</a>
+          <p className="plan-note">Estimativas com premissas documentadas (factors.js) · banda de incerteza ±40% · redução limitada a 100% de cada ação.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Plano de Ação: 3 passos pós-diagnóstico (o produto que fecha a venda) ──
 const TIPO_BADGE = {
   eficiencia: { label: 'REDUÇÃO', color: '#2ecc71', bg: 'rgba(46,204,113,0.12)' },
@@ -182,7 +245,12 @@ function ActionPlanCard({ result }) {
     <div className="plan-card">
       <div className="plan-head">
         <span className="plan-title">🎯 Seu Plano de Ação — 3 passos</span>
-        <span className="plan-sub">Específico para os seus dados · custos são estimativas</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+          <span className={`origin-chip ${result.estimadoPorCNAE ? 'estimate' : 'informed'}`}>
+            {result.estimadoPorCNAE ? '🧮 BASE: ESTIMATIVA POR CNAE' : '📊 BASE: DADOS INFORMADOS'}
+          </span>
+          <span className="plan-sub">Custos são estimativas de mercado</span>
+        </div>
       </div>
 
       <div className="plan-actions">
@@ -283,6 +351,9 @@ function CalcResult({ result, onRecalc }) {
 
       {/* PLANO DE AÇÃO — o produto primeiro */}
       <ActionPlanCard result={result} />
+
+      {/* SIMULADOR DE ROI — a feature principal */}
+      <RoiSimulatorCard result={result} />
 
       {/* BENCHMARK SETORIAL */}
       <BenchmarkCard result={result} />
@@ -433,6 +504,10 @@ function CalcResult({ result, onRecalc }) {
               <div className="pre-report-breakdown-item">
                 <span className="pre-report-breakdown-label">♻️ Resíduos</span>
                 <span className="pre-report-breakdown-value">{result.emissaoResiduos.toFixed(1)} t</span>
+              </div>
+              <div className="pre-report-breakdown-item">
+                <span className="pre-report-breakdown-label">🌾 Atividade</span>
+                <span className="pre-report-breakdown-value">{result.emissaoSetor.toFixed(1)} t</span>
               </div>
             </div>
           </div>
@@ -757,6 +832,34 @@ export default function Calculator() {
                   </select>
                   {errors.setor && <span className="field-error-msg">{errors.setor.message}</span>}
                 </div>
+                {/* ── MÓDULO SETORIAL v1: campos específicos do setor ── */}
+                {watchValues.setor === 'agro' && (
+                  <div className="form-group full-width">
+                    <label className="form-section-label">🌾 Atividade Agropecuária (Escopo 1 agrícola)</label>
+                  </div>
+                )}
+                {watchValues.setor === 'agro' && (
+                  <>
+                    <div className="form-group">
+                      <label htmlFor="rebanhoBovino">Rebanho bovino (cabeças) <Tooltip text="Número de cabeças de gado de corte/leite. Fermentação entérica (metano) — IPCC Tier 1." /></label>
+                      <input type="number" id="rebanhoBovino" {...register('rebanhoBovino')} placeholder="Ex: 200" min="0" />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="fertilizanteKg">Fertilizantes nitrogenados (kg N/ano) <Tooltip text="Quilos de nitrogênio aplicados por ano. Emissões de N₂O — IPCC Tier 1." /></label>
+                      <input type="number" id="fertilizanteKg" {...register('fertilizanteKg')} placeholder="Ex: 5000" min="0" />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="queimaResiduosT">Queima de resíduos agrícolas (t/ano) <Tooltip text="Toneladas de palha/resíduos queimados em campo por ano (CH₄ + N₂O)." /></label>
+                      <input type="number" id="queimaResiduosT" {...register('queimaResiduosT')} placeholder="Ex: 10" min="0" />
+                    </div>
+                  </>
+                )}
+                {watchValues.setor === 'comercio' && (
+                  <div className="form-group">
+                    <label htmlFor="lojasRefrigeracao">Unidades de refrigeração comercial (gôndolas/câmaras) <Tooltip text="Número de equipamentos de refrigeração com gases refrigerantes — emissões de fugas." /></label>
+                    <input type="number" id="lojasRefrigeracao" {...register('lojasRefrigeracao')} placeholder="Ex: 5" min="0" />
+                  </div>
+                )}
                 <div className="form-group">
                   <label htmlFor="funcionarios">Número de Funcionários <Tooltip text="Total de colaboradores ativos (CLT + PJ + temporários)." /></label>
                   <input type="number" id="funcionarios" {...register('funcionarios')} placeholder="Ex: 150" min="1" />

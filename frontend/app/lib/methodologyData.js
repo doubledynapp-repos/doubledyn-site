@@ -1,13 +1,12 @@
-// SPDX-License-Identifier: MIT
-// Copyright (c) 2026 DoubleDyn Ecotoken — MIT License (ver LICENSE.md)
 // ===== Nota Metodológica — Dados (fonte única de conteúdo) =====
-// Valores idênticos aos fatores usados no carbonEngine.js (consistência obrigatória).
-// STATUS: auditoria de fontes individuais em andamento — não publicar externamente antes da validação.
+// A tabela de FATORES agora é DERIVADA de app/lib/factors.js — a mesma fonte
+// que o carbonEngine usa. O que a calculadora calcula == o que a nota publica.
+import { FACTORS, FACTORS_META } from './factors';
 
 export const META = {
-  versao: '1.0',
-  dataRevisao: '2026-08-01',
-  statusAuditoria: 'Em auditoria interna — fatores e fontes individuais em validação antes da publicação externa.',
+  versao: FACTORS_META.versao,
+  dataRevisao: FACTORS_META.dataRevisao,
+  statusAuditoria: `${FACTORS_META.status} — ${FACTORS_META.nota}`,
 };
 
 export const POSICIONAMENTO = [
@@ -26,24 +25,30 @@ export const SCOPES = [
   { campo: 'Etanol (frota)', escopo: 'Neutro (bio)', obs: 'Fator 0 — biocombustível (análise de ciclo de vida não considerada)' },
 ];
 
-export const FACTORS = [
-  { fator: 'Eletricidade (rede — média anual)', valor: '0,0461', unidade: 'tCO₂/MWh', fonte: 'MCTI/SIRENE — fator médio anual do SIN, ano-base 2025 (atualizado 01/08/2026, auditoria R1)' },
-  { fator: 'GLP', valor: '2,983', unidade: 'kgCO₂/kg', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Gás natural', valor: '2,07', unidade: 'kgCO₂/m³', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Diesel (estacionário e frota)', valor: '2,603', unidade: 'kgCO₂/litro', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Gasolina', valor: '2,212', unidade: 'kgCO₂/litro', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'GNV', valor: '2,07', unidade: 'kgCO₂/m³', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Etanol', valor: '0 (neutro)', unidade: 'kgCO₂/litro', fonte: 'Biocombustível — sem fator (ciclo de vida não considerado)' },
-  { fator: 'Lenha', valor: '1460', unidade: 'kgCO₂/tonelada', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Aéreo doméstico', valor: '0,133', unidade: 'kgCO₂/km/passageiro', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Aéreo internacional', valor: '0,102', unidade: 'kgCO₂/km/passageiro', fonte: 'GHG Protocol Brasil / IPCC AR6' },
-  { fator: 'Água', valor: '0,708', unidade: 'kgCO₂/m³', fonte: 'GHG Protocol Brasil (energia embutida — simplificado)' },
-  { fator: 'Papel', valor: '3,0', unidade: 'kgCO₂/resma', fonte: 'GHG Protocol Brasil (cadeia — simplificado)' },
-  { fator: 'Ar-condicionado', valor: '0,05', unidade: 'tCO₂/unidade/ano', fonte: 'Estimativa operacional por equipamento' },
-  { fator: 'Refrigeração (fugas)', valor: '0,5 / 2,0 / 5,0', unidade: 'tCO₂/ano (pequena/média/grande)', fonte: 'Estimativa por porte — auditoria pendente' },
-  { fator: 'Resíduos (aterro)', valor: '0,5', unidade: 'tCO₂/tonelada', fonte: 'GHG Protocol Brasil — destinação em aterro (simplificado)' },
-  { fator: 'Resíduos perigosos', valor: '1,2', unidade: 'kgCO₂/kg', fonte: 'GHG Protocol Brasil — tratamento (simplificado)' },
-];
+// Rótulos de exibição por fator (apresentação — os VALORES vêm de factors.js)
+const LABEL = {
+  ELETRICIDADE: 'Eletricidade (rede — fator médio anual)',
+  GLP: 'GLP', GAS_NATURAL: 'Gás natural', DIESEL_EST: 'Diesel (gerador)',
+  GASOLINA: 'Gasolina', DIESEL: 'Diesel (frota)', GNV: 'GNV', LENHA: 'Lenha',
+  ETANOL: 'Etanol', AEREO_DOM: 'Aéreo doméstico', AEREO_INT: 'Aéreo internacional',
+  AGUA: 'Água', PAPEL: 'Papel', AR_COND: 'Ar-condicionado',
+  REFRIG: 'Refrigeração (fugas)', RESIDUOS: 'Resíduos (aterro)', RESIDUOS_PERIG: 'Resíduos perigosos',
+};
+
+const fmtValor = (v) => (typeof v === 'object' && v !== null)
+  ? Object.values(v).join(' / ')
+  : String(v).replace('.', ',');
+
+// Tabela derivada da fonte única (factors.js) — nunca mais conteúdo solto
+export const FACTORS_TABLE = Object.entries(FACTORS).map(([key, f]) => ({
+  key,
+  fator: LABEL[key] || key,
+  valor: fmtValor(f.valor),
+  unidade: f.unidade,
+  fonte: f.fonte,
+  ano: f.ano,
+  status: f.status,
+}));
 
 export const FORMULAS = [
   { nome: 'Energia (Escopo 1 + 2)', formula: '∑ consumo × fator × 12 meses. Eletricidade: kWh/1000 × fator × 12. Fontes renováveis: solar/eólica × 0,05; biomassa × 0,15; mista × 0,55.' },
