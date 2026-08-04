@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Icon from '../Icon';
 
 export default function Contato() {
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
@@ -81,10 +82,10 @@ export default function Contato() {
               <textarea id="cMsg" name="mensagem" rows="4" placeholder="Como podemos ajudar?"></textarea>
             </div>
             {status === 'success' && (
-              <div className="form-feedback form-feedback--success">✅ Mensagem enviada com sucesso!</div>
+              <div className="form-feedback form-feedback--success"><Icon name="checkCircle" size={15} inline />Mensagem enviada com sucesso!</div>
             )}
             {status === 'error' && (
-              <div className="form-feedback form-feedback--error">❌ Erro ao enviar. Tente novamente ou use o WhatsApp.</div>
+              <div className="form-feedback form-feedback--error"><Icon name="x" size={15} inline />Erro ao enviar. Tente novamente ou use o WhatsApp.</div>
             )}
             <button type="submit" className="btn btn-primary full-width" disabled={status === 'loading'}>
               {status === 'loading' ? 'Enviando...' : 'Enviar Mensagem'}

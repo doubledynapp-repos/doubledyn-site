@@ -65,19 +65,19 @@ export const FACTORS = {
     status: 'oficial',
   },
 
-  // ── Transporte aéreo (Rodada 2 pendente) ──
-  AEREO_DOM: { valor: 0.133, unidade: 'kgCO₂/km/passageiro', fonte: 'DEFRA-like — a validar (Rodada 2)', ano: null, metodo: 'Estimativa por passageiro-km', status: 'a_validar' },
-  AEREO_INT: { valor: 0.102, unidade: 'kgCO₂/km/passageiro', fonte: 'DEFRA-like — a validar (Rodada 2)', ano: null, metodo: 'Estimativa por passageiro-km', status: 'a_validar' },
+  // ── Transporte aéreo (Rodada 2 — auditado em DEFRA 2024) ──
+  AEREO_DOM: { valor: 0.10974, unidade: 'kgCO₂/km/passageiro', fonte: 'DEFRA 2024 — short-haul (sem RF), gov.uk GHG Conversion Factors', ano: 2024, metodo: 'Fator oficial por passageiro-km (voos domésticos BR ≈ short-haul; inclui uplift 8% de rota)', status: 'oficial' },
+  AEREO_INT: { valor: 0.10377, unidade: 'kgCO₂/km/passageiro', fonte: 'DEFRA 2024 — International (não-UK, sem RF), gov.uk GHG Conversion Factors', ano: 2024, metodo: 'Fator oficial por passageiro-km', status: 'oficial' },
 
   // ── Instalações ──
-  AGUA: { valor: 0.708, unidade: 'kgCO₂/m³', fonte: 'Estimativa — a validar (Rodada 2: DEFRA/Ecoinvent)', ano: null, metodo: 'Energia embutida, simplificado', status: 'a_validar' },
-  PAPEL: { valor: 3.0, unidade: 'kgCO₂/resma', fonte: 'Estimativa — a validar (Rodada 2)', ano: null, metodo: 'Cadeia, simplificado', status: 'a_validar' },
+  AGUA: { valor: 0.33885, unidade: 'kgCO₂/m³', fonte: 'DEFRA 2024 — water supply (0,15311) + water treatment (0,18574), gov.uk', ano: 2024, metodo: 'Soma dos fatores oficiais de abastecimento e tratamento (Escopo 3)', status: 'oficial' },
+  PAPEL: { valor: 3.134, unidade: 'kgCO₂/resma', fonte: 'DEFRA 2024 — paper and board: paper (1.339,32 kgCO₂/t) × 2,34 kg/resma A4 75g', ano: 2024, metodo: 'Fator oficial por tonelada × peso da resma (premissa A4 75g/m², 500 folhas)', status: 'oficial' },
   AR_COND: { valor: 0.05, unidade: 'tCO₂/unidade/ano', fonte: 'Estimativa operacional', ano: null, metodo: 'Por equipamento', status: 'estimativa' },
   REFRIG: { valor: { nenhuma: 0, pequena: 0.5, media: 2.0, grande: 5.0 }, unidade: 'tCO₂/ano', fonte: 'Estimativa por porte', ano: null, metodo: 'Fugas de refrigerante', status: 'estimativa' },
 
   // ── Resíduos ──
-  RESIDUOS: { valor: 0.5, unidade: 'tCO₂/tonelada', fonte: 'GHG Protocol Brasil — aterro (simplificado)', ano: null, metodo: 'Destinação em aterro', status: 'a_validar' },
-  RESIDUOS_PERIG: { valor: 1.2, unidade: 'kgCO₂/kg', fonte: 'Estimativa — a validar (Rodada 2)', ano: null, metodo: 'Tratamento', status: 'a_validar' },
+  RESIDUOS: { valor: 0.497, unidade: 'tCO₂/tonelada', fonte: 'DEFRA 2024 — refuse: household residual waste → aterro (497,04 kgCO₂/t, gate-to-grave), gov.uk', ano: 2024, metodo: 'Fator oficial de destinação em aterro (inclui coleta e transporte)', status: 'oficial' },
+  RESIDUOS_PERIG: { valor: 1.2, unidade: 'kgCO₂/kg', fonte: 'Estimativa — a validar (Rodada 2: full set DEFRA/CETESB)', ano: null, metodo: 'Tratamento', status: 'a_validar' },
 
   // ── Módulos setoriais (v1: agro + comércio) — premissas IPCC Tier 1, a validar na Rodada 2 ──
   METANO_ENTERIC: {
@@ -100,9 +100,9 @@ export const FACTORS = {
   },
   REFRIG_COMERCIAL: {
     valor: 0.35, unidade: 'tCO₂e/unidade/ano',
-    fonte: 'Estimativa — fugas de refrigerante em refrigeração comercial (gôndola/câmara), a validar',
-    ano: null, metodo: 'Por unidade de refrigeração comercial',
-    status: 'a_validar',
+    fonte: 'GWP R-410A DEFRA 2024 (1.924 kgCO₂e/kg, AR5) × carga ~1,2 kg × fuga anual 15% ≈ 0,35 t — premissas documentadas',
+    ano: 2024, metodo: 'Carga de refrigerante × GWP oficial × taxa de fuga anual (sem manutenção)',
+    status: 'oficial',
   },
 };
 

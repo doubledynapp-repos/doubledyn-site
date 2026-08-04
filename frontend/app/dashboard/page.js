@@ -4,7 +4,11 @@ import { useState, useMemo, useEffect } from 'react';
 import { calculateDQS } from '../lib/dqsEngine';
 import { useAuth } from '../lib/auth';
 import { getApiUrl } from '../lib/api';
+import Icon from '../components/Icon';
+import OnboardingChecklist from './OnboardingChecklist';
 import { computeBenchmark } from '../lib/benchmark';
+import { simularROI } from '../lib/roiSimulator';
+import { formatBRL } from '../lib/carbonEngine';
 
 export default function DashboardOverview() {
   const { user, token } = useAuth();
@@ -106,6 +110,7 @@ export default function DashboardOverview() {
     try {
       const res = await fetch(getApiUrl('/api/tenant/report/pdf'), { headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
+        try { localStorage.setItem('doubledyn_pdf_generated', '1'); } catch (e) { /* ignore */ }
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url;
@@ -149,6 +154,72 @@ export default function DashboardOverview() {
   const btnPrimary = { backgroundColor: accent, color: '#0a0f0d', border: 'none', padding: '10px 18px', borderRadius: '10px', fontWeight: '800', fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit' };
   const btnSecondary = { backgroundColor: 'transparent', color: textDim, border: `1px solid ${border}`, padding: '10px 16px', borderRadius: '10px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit' };
   const btnAccentOutline = { backgroundColor: `${accent}08`, color: accent, border: `1px solid rgba(195,255,0,0.15)`, padding: '10px 16px', borderRadius: '10px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit' };
+
+  // ── Simulador de ROI — extra do plano Business, exposto no dashboard ──
+  const RoiSimulatorCard = ({ result }) => {
+    const [pcts, setPcts] = useState({ a1: 1, a2: 1, a3: 1 });
+    const roi = useMemo(() => simularROI(result, pcts), [result, pcts]);
+    const setPct = (key) => (e) => setPcts((p) => ({ ...p, [key]: parseFloat(e.target.value) }));
+
+    if (!result || !result.maiorCategoria) {
+      return (
+        <div className="roi-card" style={{ textAlign: 'center', borderColor: 'rgba(195,255,0,0.35)' }}>
+          <div style={{ marginBottom: '8px' }}><Icon name="trend" size={18} inline />Simulador de ROI</div>
+          <p style={{ color: textDim, fontSize: '13px', margin: '0 0 16px' }}>Extra do plano Business. Faça o diagnóstico gratuito para liberar o simulador com os seus números.</p>
+          <a href="/" style={{ ...btnPrimary, textDecoration: 'none', display: 'inline-flex' }}>Fazer diagnóstico gratuito →</a>
+        </div>
+      );
+    }
+
+    return (
+      <div className="roi-card" style={{ borderColor: 'rgba(195,255,0,0.35)' }}>
+        <div className="roi-head">
+          <span className="roi-title"><Icon name="trend" size={18} inline />Simule seu ROI</span>
+          <span className="origin-chip informed"><Icon name="gem" size={13} inline />INCLUÍDO NO PLANO BUSINESS</span>
+        </div>
+        <div className="roi-body">
+          <div className="roi-sliders">
+            {roi.itens.map((item, i) => (
+              <div className="roi-slider-row" key={item.id || i}>
+                <div className="roi-slider-top">
+                  <span className="roi-slider-label"><b>{i + 1}. {item.titulo}</b></span>
+                  <span className="roi-slider-value">{formatBRL(item.invest)}</span>
+                </div>
+                <input
+                  type="range" min="0" max="1.5" step="0.05"
+                  value={pcts[`a${i + 1}`]} onChange={setPct(`a${i + 1}`)}
+                  className="roi-range" aria-label={`Investimento em ${item.titulo}`}
+                />
+                <div className="roi-slider-meta">
+                  <span>−{item.reducao.toFixed(0)} t/ano</span>
+                  {item.economia > 0 && <span>+ {formatBRL(item.economia)}/ano</span>}
+                  {item.paybackMeses !== null
+                    ? <span>payback ~{item.paybackMeses.toFixed(0)} meses</span>
+                    : <span>{item.custo === 0 ? 'custo zero' : 'habilitador'}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="roi-summary">
+            <div className="roi-summary-grid">
+              <div className="roi-stat"><span className="roi-stat-label">Investimento total</span><span className="roi-stat-value">{formatBRL(roi.investTotal)}</span></div>
+              <div className="roi-stat"><span className="roi-stat-label">Economia anual (médio)</span><span className="roi-stat-value">{formatBRL(roi.economiaTotal)}</span></div>
+              <div className="roi-stat"><span className="roi-stat-label">Payback médio</span><span className="roi-stat-value">{roi.paybackMedio ? `~${roi.paybackMedio.toFixed(0)} meses` : '—'}</span></div>
+              <div className="roi-stat"><span className="roi-stat-label">Exposição reduzida</span><span className="roi-stat-value">{formatBRL(roi.multaEvitadaTotal)}</span></div>
+              <div className="roi-stat"><span className="roi-stat-label">DQS</span><span className="roi-stat-value">{roi.dqsAtual} → {roi.dqsFinal}</span></div>
+              <div className="roi-stat"><span className="roi-stat-label">Retorno anual</span><span className="roi-stat-value">{roi.retornoAnualPct ? `${roi.retornoAnualPct.toFixed(0)}%` : '—'}</span></div>
+            </div>
+            <div className="roi-scenarios">
+              <span className="roi-scenario conservador">Conservador {formatBRL(roi.cenarios.conservador)}/ano</span>
+              <span className="roi-scenario medio">Médio {formatBRL(roi.cenarios.medio)}/ano</span>
+              <span className="roi-scenario otimista">Otimista {formatBRL(roi.cenarios.otimista)}/ano</span>
+            </div>
+            <p className="plan-note" style={{ margin: '12px 0 0' }}>Estimativas com premissas documentadas (factors.js) · banda de incerteza ±40% · redução limitada a 100% de cada ação.</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -199,6 +270,14 @@ export default function DashboardOverview() {
         </div>
       </div>
 
+      {/* Onboarding guiado — primeiras ações do cliente */}
+      <OnboardingChecklist
+        calcData={calcData}
+        hasOffsets={offsets.length > 0}
+        onPdf={handleDownloadPdf}
+        onOffset={() => setShowOffsetModal(true)}
+      />
+
       {/* Diagnóstico da calculadora — continuação do contexto */}
       {calcData && (
         <div style={{
@@ -215,7 +294,7 @@ export default function DashboardOverview() {
         }}>
           <div>
             <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '2px', color: accent, marginBottom: '8px' }}>
-              📋 SEU DIAGNÓSTICO DA CALCULADORA
+              <Icon name="clipboard" size={18} inline /> SEU DIAGNÓSTICO DA CALCULADORA
             </div>
             <div style={{ fontSize: '16px', fontWeight: '800', color: '#e8efe8', marginBottom: '4px' }}>{calcData.empresa}</div>
             <div style={{ fontSize: '13px', color: textDim }}>
@@ -228,6 +307,23 @@ export default function DashboardOverview() {
           </a>
         </div>
       )}
+
+      {/* Diagnóstico completo — profundidade técnica fica no produto pago */}
+      {calcData && calcData.maiorCategoria && (
+        <div style={{ background: bgCard, border: `1px solid ${border}`, borderRadius: '16px', padding: '20px 24px', marginBottom: '20px' }}>
+          <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '2px', color: accent, marginBottom: '14px' }}><Icon name="chart" size={16} inline />DIAGNÓSTICO COMPLETO</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginBottom: '14px' }}>
+            <div><div style={{ fontSize: '11px', color: textMuted, marginBottom: '2px' }}>Impacto anual</div><div style={{ fontSize: '18px', fontWeight: 800, color: '#e8efe8' }}>{calcData.totalEmissao.toFixed(1)} tCO₂e</div></div>
+            <div><div style={{ fontSize: '11px', color: textMuted, marginBottom: '2px' }}>Exposição SBCE</div><div style={{ fontSize: '18px', fontWeight: 800, color: '#e8efe8' }}>{calcData.exposureScore ? calcData.exposureScore.toFixed(1) : '—'}/10</div></div>
+            <div><div style={{ fontSize: '11px', color: textMuted, marginBottom: '2px' }}>Risco regulatório</div><div style={{ fontSize: '18px', fontWeight: 800, color: '#e74c3c' }}>{calcData.risco || '—'}</div></div>
+            <div><div style={{ fontSize: '11px', color: textMuted, marginBottom: '2px' }}>Passivo estimado</div><div style={{ fontSize: '18px', fontWeight: 800, color: '#e74c3c' }}>{calcData.faturamento > 0 ? formatBRL(calcData.multaPotencial) : '—'}</div></div>
+          </div>
+          <div style={{ color: textDim, lineHeight: 1.6 }}><Icon name="bulb" size={15} inline />{calcData.maiorCategoria?.insight}</div>
+        </div>
+      )}
+
+      {/* Simulador de ROI — extra Business */}
+      <RoiSimulatorCard result={calcData} />
 
       {/* DQS Score Hero */}
       <div style={{

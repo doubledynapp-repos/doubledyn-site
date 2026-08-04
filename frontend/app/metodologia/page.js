@@ -3,6 +3,7 @@ import {
   META, POSICIONAMENTO, SCOPES, FACTORS_TABLE, FORMULAS,
   BENCHMARKS, DQS, LIMITACOES,
 } from '../lib/methodologyData';
+import Icon from '../components/Icon';
 
 // Paleta alinhada ao site
 const C = {
@@ -162,7 +163,7 @@ export default function Metodologia() {
             </ul>
           </Card>
           <p style={{ ...p, marginTop: '18px', color: C.warn, fontSize: '0.85rem' }}>
-            ⚠️ {META.statusAuditoria}
+            <Icon name="alert" size={14} inline /> {META.statusAuditoria}
           </p>
         </section>
 

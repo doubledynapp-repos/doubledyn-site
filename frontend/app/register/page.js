@@ -54,6 +54,22 @@ export default function Register() {
         setLoading(true);
         setError('');
 
+        // Validação local do CNPJ (dígitos verificadores) antes de enviar
+        const validaCNPJ = (c) => {
+            const digits = String(c || '').replace(/\D/g, '');
+            if (digits.length !== 14 || /^(\d)\1+$/.test(digits)) return false;
+            const calc = (d, p) => { const s = d.reduce((a, x, i) => a + x * p[i], 0) % 11; return s < 2 ? 0 : 11 - s; };
+            const base = digits.slice(0, 12).split('').map(Number);
+            if (calc(base, [5,4,3,2,9,8,7,6,5,4,3,2]) !== Number(digits[12])) return false;
+            if (calc([...base, Number(digits[12])], [6,5,4,3,2,9,8,7,6,5,4,3,2]) !== Number(digits[13])) return false;
+            return true;
+        };
+        if (!validaCNPJ(cnpj)) {
+            setError('CNPJ inválido. Verifique os dígitos antes de continuar.');
+            setLoading(false);
+            return;
+        }
+
         try {
             const res = await fetch(getApiUrl('/api/auth/register'), {
                 method: 'POST',

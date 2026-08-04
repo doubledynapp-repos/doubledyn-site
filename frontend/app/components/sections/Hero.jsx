@@ -1,6 +1,8 @@
+import { track } from '../../lib/track';
+
 export default function Hero() {
   return (
-    <section className="hero" id="hero">
+    <section className="hero light" id="hero">
       <div className="hero-bg-particles" id="particles"></div>
       <div className="hero-content">
         <div className="hero-badge">
@@ -8,15 +10,14 @@ export default function Hero() {
           Protocolo DoubleDyn V1
         </div>
         <h1 className="hero-title">
-          Qual o <span className="text-accent">impacto ambiental</span> da sua empresa?
-          <br />Descubra <span className="text-accent">agora.</span>
+          Sua empresa precisa <span className="text-accent">comprovar</span> — não só medir.
         </h1>
         <p className="hero-sub">
-          Calculadora gratuita de impacto ambiental corporativo. Receba um relatório personalizado
-          e descubra como economizar com ativos ambientais rastreáveis.
+          A plataforma de confiança ambiental: meça com método auditado (GHG Protocol, MCTI/SIRENE),
+          compense com rastreabilidade on-chain e prove com certificado verificável.
         </p>
         <div className="hero-ctas">
-          <a href="/register" className="btn btn-primary">Crie sua conta grátis →</a>
+          <a href="/register" className="btn btn-primary" onClick={() => track('cta_criar_conta_hero')}>Crie sua conta grátis →</a>
         </div>
       </div>
       <div className="hero-scroll-indicator">

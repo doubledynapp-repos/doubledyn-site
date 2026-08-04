@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Seal from '../Seal';
 
 // ── Conteúdo dos 3 passos (RASCUNHO — revisar com a equipe) ──
 const STEPS = [
@@ -7,9 +8,7 @@ const STEPS = [
     id: 1,
     numero: '01',
     titulo: 'Calcule',
-    icone: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="10.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="16" y1="14" x2="16" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
-    ),
+    icone: 'leaf',
     resumo: 'Use nossa calculadora gratuita para descobrir o impacto ambiental da sua operação com base em dados reais.',
     painelTitulo: 'Diagnóstico completo em ~2 minutos',
     bullets: [
@@ -31,9 +30,7 @@ const STEPS = [
     id: 2,
     numero: '02',
     titulo: 'Consultoria',
-    icone: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
-    ),
+    icone: 'handSprout',
     resumo: 'Nossos especialistas analisam o relatório e criam um plano personalizado de redução e compensação.',
     painelTitulo: 'Especialistas que transformam diagnóstico em ação',
     bullets: [
@@ -54,9 +51,7 @@ const STEPS = [
     id: 3,
     numero: '03',
     titulo: 'Certifique',
-    icone: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 15a5 5 0 100-10 5 5 0 000 10z"></path><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"></path></svg>
-    ),
+    icone: 'tree',
     resumo: 'Receba o Certificado DoubleDyn — prova pública e verificável de que sua empresa compensa suas emissões.',
     painelTitulo: 'Prova pública, imutável e verificável',
     bullets: [
@@ -86,6 +81,7 @@ export default function ComoFunciona() {
         <div className="section-label">Como Funciona</div>
         <h2 className="section-title">
           Três passos para a <span className="text-accent">neutralidade</span>
+          <svg className="title-squiggle" viewBox="0 0 220 14" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10c30-8 60-8 90-3s60 5 90-2 25-3 34-2" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round"/></svg>
         </h2>
 
         <div className="how-grid">
@@ -100,7 +96,7 @@ export default function ComoFunciona() {
               >
                 <div className="how-card-top">
                   <div className="how-card-head">
-                    <span className="how-icon">{s.icone}</span>
+                    <span className="how-icon"><Seal icon={s.icone} size={54} /></span>
                     <div className="how-number">{s.numero}</div>
                   </div>
                   <span className="how-chevron" aria-hidden="true">

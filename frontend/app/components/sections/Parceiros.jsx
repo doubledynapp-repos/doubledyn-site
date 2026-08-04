@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Icon from '../Icon';
 
 // ── Selos de credibilidade (RASCUNHO — revisar com a equipe) ──
 const SELOS = [
@@ -153,7 +154,7 @@ export default function Parceiros() {
             Descobrir Meu Impacto Ambiental
           </a>
           <a href="https://wa.me/5511924526590?text=Olá!%20Quero%20saber%20como%20certificar%20minha%20empresa." className="btn btn-secondary" target="_blank" rel="noopener noreferrer">
-            💬 Falar com Consultor
+            <Icon name="chat" size={16} inline /> Falar com Consultor
           </a>
         </div>
       </div>

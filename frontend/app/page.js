@@ -5,6 +5,7 @@ import { useRevealOnScroll } from './hooks/useReveal';
 import Navbar from './components/sections/Navbar';
 import Hero from './components/sections/Hero';
 import Problema from './components/sections/Problema';
+import CaseIngai from './components/sections/CaseIngai';
 import ComoFunciona from './components/sections/ComoFunciona';
 import Calculator from './components/sections/Calculator';
 import Parceiros from './components/sections/Parceiros';
@@ -14,11 +15,13 @@ import Team from './components/sections/Team';
 import Contato from './components/sections/Contato';
 import LgpdBanner from './components/sections/LgpdBanner';
 import Footer from './components/sections/Footer';
+import { initTracking } from './lib/track';
 
 export default function Home() {
   useRevealOnScroll();
 
   useEffect(() => {
+    initTracking(); // captura UTM/ref da URL de entrada (uma vez por sessão)
     // Se a página carregar com uma hash na URL (ex: vindos do blog), scrollar até ela
     if (typeof window !== 'undefined' && window.location.hash) {
       setTimeout(() => {
@@ -38,24 +41,26 @@ export default function Home() {
         <Hero />
 
         <div className="image-showcase">
-          <img src="/assets/images/hero-landscape.png" alt="Reflorestamento no cerrado brasileiro" loading="lazy" />
-          <span className="caption">Reflorestamento nativo — Paracatu, MG</span>
+          <img src="/assets/images/forest-aerial.png" alt="Floresta nativa — o ativo que sustenta a compensação" loading="lazy" />
+          <span className="caption">Compensação com certificado on-chain: cada tonelada registrada e verificável (caso Ingaí, Polygon Mainnet)</span>
         </div>
 
         <Problema />
+
+        <CaseIngai />
         <ComoFunciona />
 
         <div className="image-showcase">
-          <img src="/assets/images/industry-sustainable.png" alt="Indústria sustentável" loading="lazy" />
-          <span className="caption">Infraestrutura industrial com compliance ambiental</span>
+          <img src="/assets/images/industry-sustainable.png" alt="Indústria — o cenário onde emissões precisam ser comprovadas" loading="lazy" />
+          <span className="caption">Do cálculo ao certificado: a jornada para comprovar emissões</span>
         </div>
 
         <Calculator />
         <Parceiros />
 
         <div className="image-showcase">
-          <img src="/assets/images/planting-closeup.png" alt="Plantio de mudas nativas" loading="lazy" />
-          <span className="caption">Programa de restauração — 240+ mudas plantadas</span>
+          <img src="/assets/images/planting-closeup.png" alt="Plantio de mudas — a origem de projetos de restauração" loading="lazy" />
+          <span className="caption">Crédito legítimo nasce de projeto real — a plataforma rastreia da origem ao certificado</span>
         </div>
 
         <Midia />

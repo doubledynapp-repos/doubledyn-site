@@ -12,9 +12,19 @@ const textMuted = '#5a7a63';
 
 const PLANS = [
   {
+    key: 'starter',
+    name: 'Starter',
+    price: 'R$ 490',
+    period: '/mês',
+    description: 'Para começar a medir e compensar suas emissões.',
+    features: ['Inventário básico de emissões', 'Até 10 certificados NFT/ano', 'Relatório PDF trimestral', 'Suporte por e-mail'],
+    cta: 'Assinar Starter',
+    popular: false
+  },
+  {
     key: 'business',
     name: 'Business',
-    price: 'R$ 490',
+    price: 'R$ 990',
     period: '/mês',
     description: 'Para PMEs que precisam iniciar a gestão de carbono.',
     features: ['Dashboard DQS completo', 'Até 50 certificados NFT/ano', 'Widget HTML de selo', 'Relatório PDF mensal', 'Desconto de 15% na queima', 'Suporte por e-mail'],
@@ -24,7 +34,7 @@ const PLANS = [
   {
     key: 'enterprise',
     name: 'Enterprise',
-    price: 'R$ 1.990',
+    price: 'R$ 2.490',
     period: '/mês',
     description: 'Para indústrias e governos com alta demanda regulatória.',
     features: ['Tudo do Business +', 'Certificados NFT ilimitados', 'API de integração ERP', 'Relatório BNDES/SBCE oficial', 'Desconto de 25% na queima', 'Suporte prioritário WhatsApp', 'Onboarding com consultor'],
@@ -57,7 +67,7 @@ export default function BillingPage() {
       });
       const data = await res.json();
       if (data.url) window.open(data.url, '_blank');
-      else alert('Configure a API Key do Asaas para ativar pagamentos.');
+      else alert(data.error || 'Não foi possível gerar o link de pagamento. Tente novamente.');
     } catch (e) { alert('Erro de conexão com o servidor.'); }
     finally { setCheckoutLoading(null); }
   };
@@ -94,7 +104,8 @@ export default function BillingPage() {
             <div key={plan.key} style={{
               background: bgCard,
               border: plan.popular ? `1px solid rgba(195,255,0,0.15)` : `1px solid ${border}`,
-              borderRadius: '16px', padding: '32px', position: 'relative', overflow: 'hidden'
+              borderRadius: '16px', padding: '32px', position: 'relative', overflow: 'hidden',
+              display: 'flex', flexDirection: 'column'
             }}>
               {plan.popular && (
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: `linear-gradient(90deg, ${accent}, transparent)` }} />
@@ -110,7 +121,7 @@ export default function BillingPage() {
                 <span style={{ fontSize: '14px', color: textMuted }}>{plan.period}</span>
               </div>
 
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
                 {plan.features.map((feat, i) => (
                   <li key={i} style={{ fontSize: '13px', color: textDim, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>

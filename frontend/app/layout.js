@@ -25,23 +25,46 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata = {
   metadataBase: new URL('https://doubledyn.com'),
-  title: "DoubleDyn Ecotoken — Calculadora de Impacto Ambiental Corporativo",
-  description: "Descubra o impacto ambiental da sua empresa agora. Calculadora gratuita de carbono para empresas. Relatório ESG personalizado, DQS Score e compliance com a Lei 15.042/2024 (SBCE).",
-  keywords: ['calculadora carbono', 'impacto ambiental empresa', 'SBCE', 'compliance ESG', 'crédito de carbono', 'DoubleDyn'],
+  title: "DoubleDyn — Plataforma de Confiança Ambiental | Meça, Compense, Comprove",
+  description: "Plataforma de confiança ambiental: meça emissões com metodologia auditada (GHG Protocol, MCTI/SIRENE), compense com rastreabilidade on-chain e comprove com certificado verificável. Compliance com a Lei 15.042/2024 (SBCE).",
+  keywords: ['calculadora carbono', 'impacto ambiental empresa', 'SBCE', 'compliance ESG', 'crédito de carbono', 'compensação on-chain', 'certificado NFT', 'DoubleDyn'],
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
   openGraph: {
-    title: 'DoubleDyn — Calculadora de Impacto Ambiental Corporativo',
-    description: 'Descubra o impacto ambiental da sua empresa agora e receba um plano de ação personalizado.',
+    title: 'DoubleDyn — Plataforma de Confiança Ambiental',
+    description: 'Meça com método auditado, compense com rastreabilidade on-chain e comprove com certificado verificável.',
     url: 'https://doubledyn.com',
-    siteName: 'DoubleDyn Ecotoken',
+    siteName: 'DoubleDyn',
     images: [{ url: '/assets/og-image.png', width: 1200, height: 630 }],
     locale: 'pt_BR',
     type: 'website',
   },
 };
 
+// Dados estruturados (JSON-LD) — ajuda o Google a entender o negócio
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'DoubleDyn',
+  url: 'https://doubledyn.com',
+  logo: 'https://doubledyn.com/assets/og-image.png',
+  description: 'Plataforma de confiança ambiental: inventário de GEE, cálculo de emissões, compensação on-chain e certificação verificável.',
+  sameAs: [],
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR" className={`${dmSans.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://blog.doubledyn.com" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      </head>
       <body>
         {children}
       </body>

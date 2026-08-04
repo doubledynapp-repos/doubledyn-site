@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Áreas autenticadas / administrativas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /admin.html
+Disallow: /admin-app.js
+Disallow: /admin-style.css
+
+# Páginas legadas substituídas (evitar conteúdo duplicado)
+Disallow: /registro.html
+Disallow: /agendamento.html
+Disallow: /pitch-presentation.html
+
+Sitemap: https://doubledyn.com/sitemap.xml

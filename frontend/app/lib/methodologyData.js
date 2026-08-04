@@ -71,14 +71,15 @@ export const BENCHMARKS = [
 ];
 
 export const DQS = {
-  descricao: 'O DQS (DoubleDyn Quality Score, 0–1000) mede a eficiência carbônica da empresa frente à média do seu setor:',
+  descricao: 'O DQS (DoubleDyn Quality Score, 0–1000) mede a maturidade de carbono da empresa com base na hierarquia de mitigação do GHG Protocol (medir → reduzir → compensar), alinhada ao SBCE (Lei 15.042/2024):',
   passos: [
-    'Intensidade = emissões totais (tCO₂e) ÷ faturamento (R$ milhões)',
-    'Razão = intensidade da empresa ÷ benchmark do setor',
+    'Pesos documentados: Intensidade 500 pts (50%) · Gestão 250 pts (25%) · Compensação 250 pts (25%)',
+    'Intensidade = tCO₂e ÷ R$ 1 milhão de faturamento vs. benchmark setorial (padrão SEEG/GHG); proxy operacional (tCO₂e/funcionário vs. média do setor) quando o faturamento não é informado — métrica declarada no resultado',
     'Pontuação de intensidade (0–500): razão ≤ 0,3 → 500; escala decrescente até ≥ 2,0 → mínimo 20',
-    'Pontuação de gestão (0–200): base 100 + 50 se energia renovável + 50 se política ESG',
-    'Pontuação de compensação (0–300): % compensado × 300 (limitado a 100%)',
-    'DQS = intensidade + gestão + compensação, limitado entre 50 e 1000',
+    'Gestão (0–250): rubrica metodológica SEM pontos grátis — certificação formal +70 · política ESG/inventário +60 · energia renovável +50 · gestão de resíduos +40 · relato anual +30',
+    'Compensação (0–250): % neutralizado × 250 (limitado a 100%)',
+    'Fator de confiança: estimativa por CNAE (dados não medidos) aplica 0,92 — incerteza metodológica penaliza 8%',
+    'DQS = (intensidade + gestão + compensação) × fator de confiança, limitado entre 50 e 1000',
   ],
   selos: [
     { nome: 'Ouro', faixa: '≥ 751' },

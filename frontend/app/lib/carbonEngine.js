@@ -2,6 +2,7 @@
 // Reescrito como módulo ES6 puro, sem dependência do DOM.
 // Fonte: GHG Protocol Brasil, IPCC AR6, MCTI 2024, ABNT NBR ISO 14064.
 import { FACTORS } from './factors';
+import { calculateDQS } from './dqsEngine';
 
 // ===== CONSTANTES SETORIAIS =====
 // Benchmarks de intensidade (tCO₂e por R$ 1 mi de faturamento) — SEEG/GHG Protocol Brasil.
@@ -146,6 +147,7 @@ function computeSectorEmissions(v, F) {
  * @returns {object} Objeto com todos os resultados calculados.
  */
 export function calculateEmissions(data, opts = {}) {
+  if (typeof data !== 'object' || data === null) data = {};
   // ── STEP 1: EMPRESA ──
   const empresa = data.empresa || 'Sua Empresa';
   const setor = data.setor || 'outro';
@@ -227,17 +229,6 @@ export function calculateEmissions(data, opts = {}) {
   let margemSeguranca = emissaoBase * 0.15;
   const totalEmissao = emissaoBase + margemSeguranca;
 
-  // ── DQS SCORE ──
-  const intensidade = totalEmissao / funcionarios;
-  const mediaSetor = MEDIA_SETOR[setor] || MEDIA_SETOR['outro'];
-  const razaoSetorial = intensidade / mediaSetor;
-  const dqsScore = Math.min(1000, Math.max(0, Math.round(1000 - razaoSetorial * 500)));
-
-  let pcrSeal = 'Bronze';
-  let pcrColor = '#cd7f32';
-  if (dqsScore >= 700) { pcrSeal = 'Ouro'; pcrColor = '#f1c40f'; }
-  else if (dqsScore >= 400) { pcrSeal = 'Prata'; pcrColor = '#bdc3c7'; }
-
   // ── IMPACTO EMOCIONAL ──
   const arvoresPreservadas = Math.round(totalEmissao * 6.25);
 
@@ -262,6 +253,28 @@ export function calculateEmissions(data, opts = {}) {
   const exportaUE = data.exportaUE || 'nao';
   const jaFazInventario = data.jaFazInventario || 'nao';
   const setorCBAM = data.setorCBAM || 'outro';
+
+  // ── DQS SCORE — motor unificado (dqsEngine v1.1, metodologia documentada) ──
+  // Intensidade 500 (faturamento R$mi vs. benchmark SEEG, ou proxy por funcionário)
+  // + Gestão 250 (rubrica, sem pontos grátis) + Compensação 250, × fator de confiança (0,92 se estimado)
+  const DQS_SECTOR_MAP = { comercio: 'comercio', servicos: 'servicos', industria: 'industria', agro: 'agro', construcao: 'construcao', logistica: 'logistica', outro: 'outros', energia: 'industria', publico: 'outros', saude: 'servicos', educacao: 'servicos', turismo: 'servicos' };
+  const intensidade = totalEmissao / (funcionarios || 1);
+  const mediaSetor = MEDIA_SETOR[setor] || MEDIA_SETOR['outro'];
+  const razaoSetorial = intensidade / mediaSetor;
+  const dqsCalc = calculateDQS({
+    emissionsTotal: totalEmissao,
+    revenueMillions: faturamento > 0 ? faturamento / 1e6 : 0,
+    intensityRatio: razaoSetorial,
+    sectorKey: DQS_SECTOR_MAP[setor] || 'outros',
+    hasRenewableEnergy: ['solar', 'eolica', 'biomassa'].includes(data.fonteEnergia),
+    hasESGPolicy: data.praticasSustentaveis === 'sim',
+    hasCertification: data.certificacao === 'sim',
+    hasWasteManagement: data.praticasSustentaveis === 'sim' && Number(data.residuos || 0) > 0,
+    estimadoPorCNAE,
+  });
+  const dqsScore = dqsCalc.dqsScore;
+  const pcrSeal = dqsCalc.seal.level;
+  const pcrColor = dqsCalc.seal.color;
 
   let exposureScore = 0;
   if (totalEmissao >= 25000) exposureScore += 3.0;

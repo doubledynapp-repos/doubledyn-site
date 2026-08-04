@@ -36,6 +36,15 @@ export const PREMISSAS = {
   // inventário GHG + política ESG (habilita selo e relatório SBCE)
   inventarioCusto: 15000,
   impactoDQSInventario: 50,
+  // otimização de frota (telemática/gestão) — custo baixo, sem capex de veículos
+  frotaOtimizacaoCusto: 12000,
+  frotaOtimizacaoReducaoPct: 0.12,
+  // manejo agropecuário (agro) — compostagem, nutrição, fertilizante de precisão
+  manejoAgroCusto: 20000,
+  manejoAgroReducaoPct: 0.25,
+  // manutenção de refrigeração comercial (comércio) — vedação, recarga, registro de fugas
+  refrigManutencaoCusto: 8000,
+  refrigManutencaoReducaoPct: 0.3,
 };
 
 // Rótulo da exposição regulatória (base: Lei 15.042/2024, Art. 29 — até 3% do faturamento)
@@ -48,6 +57,16 @@ function custoEnergiaAnualEstimado(emissaoEnergia, P) {
   if (!emissaoEnergia || emissaoEnergia <= 0) return 0;
   const mwh = emissaoEnergia / P.fatorSINEletricidade;
   return mwh * P.tarifaMediaMWh;
+}
+
+// Aviso de credibilidade: conta de energia estimada implausível vs faturamento informado.
+// Protege o plano de números absurdos (ex.: consumo extremo → economia irreal).
+function credibilidadeEnergia(faturamento, custoEnergia) {
+  if (!faturamento || faturamento <= 0 || !custoEnergia || custoEnergia <= 0) return null;
+  if (custoEnergia > faturamento * 1.5) {
+    return `⚠️ Custo anual de energia estimado (R$ ${Math.round(custoEnergia).toLocaleString('pt-BR')}) é maior que o faturamento informado — confira o consumo informado (kWh/mês) ou o faturamento.`;
+  }
+  return null;
 }
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -73,27 +92,28 @@ export function gerarPlanoDeAcao(result) {
     'Frota': r.emissaoTransporte || 0,
     'Instalações': r.emissaoInstalacoes || 0,
     'Resíduos': r.emissaoResiduos || 0,
+    'Atividade': r.emissaoSetor || 0,
   }[maior] || 0;
 
   let a1 = null;
   if (maior === 'Frota' && emitMaior > 0) {
-    const veiculos = Math.max(1, Math.ceil(emitMaior / P.emissaoPorVeiculoAno));
-    const veiculosPlano = Math.max(1, Math.round(veiculos * P.fracaoFrotaEletrificar));
-    const custo = veiculosPlano * P.custoVeiculoEletrico;
-    const reducao = r1(emitMaior * P.fracaoFrotaEletrificar * P.reducaoFrotaEletricaPct);
-    const economia = veiculosPlano * P.economiaVeiculoEletricoAno;
+    // Ações de baixo investimento que o cliente executa com recursos próprios
+    // (eletrificação de frota exige capex alto e fornecedores — fase 2)
+    const reducao = r1(emitMaior * P.frotaOtimizacaoReducaoPct);
     a1 = {
       id: 'a1_frota', tipo: 'eficiencia',
-      titulo: `Eletrifique ${veiculosPlano} veículo${veiculosPlano > 1 ? 's' : ''} da frota (fase 1)`,
-      descricao: `Sua frota é o maior emissor (${emitMaior.toFixed(0)} tCO₂e/ano). A substituição gradual por veículos elétricos reduz até 60% das emissões de transporte e corta custo de combustível e manutenção.`,
+      titulo: 'Otimize rotas, manutenção e combustíveis da frota',
+      descricao: `Sua frota é o maior emissor (${emitMaior.toFixed(0)} tCO₂e/ano). Gestão de rotas com telemática, manutenção preventiva e adição de biocombustíveis (etanol/biodiesel) reduz custo e emissões com investimento baixo.`,
       categoria: 'Frota',
-      custo, economiaAnual: economia,
-      paybackMeses: economia > 0 ? Math.round((custo / economia) * 12) : null,
-      reducaoTonnes: reducao, impactoDQS: 40,
+      custo: P.frotaOtimizacaoCusto, economiaAnual: null,
+      paybackMeses: null,
+      reducaoTonnes: reducao, impactoDQS: 30,
       exposicao: exposicaoLabel(multaPotencial),
-      nota: 'Economia por veículo: premissa de R$ 24 mil/ano (combustível + manutenção).',
+      nota: 'Investimento baixo (telemática/gestão). Eletrificação é fase 2 — avaliar com incentivos e orçamento de fornecedores locais.',
     };
   } else if (maior === 'Energia' && (emitMaior > 0 || estimadoPorCNAE)) {
+    // Mercado livre: custo zero, quick win — o cliente executa via fornecedor de energia.
+    // Solar fotovoltaica exige capex alto e fornecedores autorizados — fase 2 (não vendemos).
     const base = emitMaior > 0 ? emitMaior : total; // estimado: usa o total projetado pelo setor
     const reducao = r1(base * P.economiaMercadoLivrePct);
     const custoEnergia = emitMaior > 0 ? custoEnergiaAnualEstimado(emitMaior, P) : 0;
@@ -111,8 +131,40 @@ export function gerarPlanoDeAcao(result) {
       exposicao: exposicaoLabel(multaPotencial),
       nota: estimadoPorCNAE
         ? 'Redução estimada sobre o total projetado pela média setorial — confirmar com dados reais no inventário.'
-        : 'Custo anual de energia estimado a partir das emissões (fator SIN MCTI 2025 + tarifa média R$ 800/MWh).',
+        : credibilidadeEnergia(faturamento, custoEnergia)
+          ? credibilidadeEnergia(faturamento, custoEnergia)
+          : 'Custo zero — viabilizado via fornecedor de energia ou parceria (a formalizar). Solar fotovoltaica é fase 2 (capex alto, orçamento com fornecedores locais).',
     };
+  } else if (maior === 'Atividade' && emitMaior > 0) {
+    // Módulo setorial (v1): agro ou comércio com emissões de atividade dominantes
+    const setor = r.setor || 'agro';
+    if (setor === 'agro') {
+      const reducao = r1(emitMaior * P.manejoAgroReducaoPct);
+      a1 = {
+        id: 'a1_atividade_agro', tipo: 'eficiencia',
+        titulo: 'Manejo de rebanho e fertilizantes de precisão',
+        descricao: `Sua atividade agropecuária é o maior emissor (${emitMaior.toFixed(0)} tCO₂e/ano). Compostagem de esterco, ajuste nutricional do rebanho e fertilizantes de precisão reduzem metano e N₂O com investimento moderado.`,
+        categoria: 'Atividade',
+        custo: P.manejoAgroCusto, economiaAnual: null,
+        paybackMeses: null,
+        reducaoTonnes: reducao, impactoDQS: 40,
+        exposicao: exposicaoLabel(multaPotencial),
+        nota: 'Práticas executáveis com recursos próprios. Integração lavoura-pecuária e biodigestores são fase 2 (capex maior).',
+      };
+    } else {
+      const reducao = r1(emitMaior * P.refrigManutencaoReducaoPct);
+      a1 = {
+        id: 'a1_atividade_refrig', tipo: 'eficiencia',
+        titulo: 'Manutenção preventiva da refrigeração comercial',
+        descricao: `A refrigeração comercial é seu maior emissor (${emitMaior.toFixed(0)} tCO₂e/ano). Vedação de gôndolas, controle de recarga e registro de fugas de refrigerante reduzem emissões e custo operacional.`,
+        categoria: 'Atividade',
+        custo: P.refrigManutencaoCusto, economiaAnual: null,
+        paybackMeses: null,
+        reducaoTonnes: reducao, impactoDQS: 35,
+        exposicao: exposicaoLabel(multaPotencial),
+        nota: 'Plano de manutenção executável com equipe própria ou fornecedor local.',
+      };
+    }
   } else if (maior === 'Instalações' && emitMaior > 0) {
     const reducao = r1(emitMaior * P.retrofitReducaoPct);
     a1 = {
